@@ -74,7 +74,8 @@ namespace SentinelViewer
 
         internal static void Stage(Release release)
         {
-            string folder = Path.Combine(Path.GetDirectoryName(ExecutablePath()), ".egorika-update-" + Guid.NewGuid().ToString("N"));
+            string directory = StudioDependencies.RuntimeDirectory(Path.GetDirectoryName(ExecutablePath()));
+            string folder = Path.Combine(directory, ".egorika-update-" + Guid.NewGuid().ToString("N"));
             Directory.CreateDirectory(folder);
             string candidate = Path.Combine(folder, AssetName);
             try
@@ -144,7 +145,8 @@ namespace SentinelViewer
         {
             string staging = Path.GetDirectoryName(ExecutablePath());
             string candidate = Path.Combine(staging, AssetName);
-            if (!String.Equals(Path.GetDirectoryName(staging), Path.GetDirectoryName(target), StringComparison.OrdinalIgnoreCase) ||
+            string directory = StudioDependencies.RuntimeDirectory(Path.GetDirectoryName(target));
+            if (!String.Equals(Path.GetDirectoryName(staging), directory, StringComparison.OrdinalIgnoreCase) ||
                 !Path.GetFileName(staging).StartsWith(".egorika-update-", StringComparison.Ordinal) ||
                 !Regex.IsMatch(hash, @"\A[a-fA-F0-9]{64}\z")) return 1;
             string backup = Path.Combine(staging, "previous.exe");

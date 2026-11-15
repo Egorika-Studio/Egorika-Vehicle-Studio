@@ -1393,6 +1393,7 @@ namespace SentinelViewer
                 return StudioUpdate.Apply(args[1], args[2], args[3]);
             try
             {
+                StudioDependencies.RegisterResolver();
                 if (args.Length == 0) StudioDependencies.PrepareForLaunch();
                 else StudioDependencies.EnsureCodeWalker();
             }

@@ -3,6 +3,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Security.Cryptography;
 
 namespace SentinelViewer
@@ -12,7 +13,29 @@ namespace SentinelViewer
         const string Library = "CodeWalker.Core.dll";
         const string Download = "https://files.gta5-mods.com/uploads/codewalker-gtav-interactive-3d-map/1cfcd8-CodeWalker30_dev46.zip";
         const string LibrarySha256 = "3D2BB91B35CF0D1888C12772A9AF25441ADEA3CCC8510A149FCF0D47C8E71CA8";
-        static string LibraryPath { get { return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Library); } }
+        internal static string RuntimeDirectory(string applicationDirectory)
+        {
+            string runtime = Path.Combine(applicationDirectory, "runtime");
+            return File.Exists(Path.Combine(runtime, "SharpDX.dll")) ? runtime : applicationDirectory;
+        }
+
+        static string LibraryPath
+        {
+            get { return Path.Combine(RuntimeDirectory(AppDomain.CurrentDomain.BaseDirectory), Library); }
+        }
+
+        internal static void RegisterResolver()
+        {
+            string directory = RuntimeDirectory(AppDomain.CurrentDomain.BaseDirectory);
+            if (directory == AppDomain.CurrentDomain.BaseDirectory) return;
+            AppDomain.CurrentDomain.AssemblyResolve += (sender, args) =>
+            {
+                string name = new AssemblyName(args.Name).Name;
+                if (name != "CodeWalker.Core" && name != "SharpDX" && name != "SharpDX.Mathematics") return null;
+                string path = Path.Combine(directory, name + ".dll");
+                return File.Exists(path) ? Assembly.LoadFrom(path) : null;
+            };
+        }
 
         internal static void PrepareForLaunch()
         {

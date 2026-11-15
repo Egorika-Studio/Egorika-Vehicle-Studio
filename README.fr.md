@@ -9,26 +9,15 @@ Enregistrez la scène et le brouillon dans un projet `.egvehicle`.
 
 ## Télécharger et lancer
 
-1. Téléchargez le [ZIP portable pour Windows x64](https://github.com/Egorika-Studio/Egorika-Vehicle-Studio/releases/latest/download/EgorikaVehicleStudio-Windows-x64.zip)
-   et extrayez-le dans un dossier où vous avez le droit d’écrire.
-2. Lancez `EgorikaVehicleStudio.exe`. Une connexion Internet est nécessaire
-   au premier démarrage. L’application télécharge CodeWalker 30 dev46 depuis
-   le site de distribution de son auteur, vérifie le SHA-256 de la bibliothèque
-   et l’enregistre à côté de l’EXE. Si une bibliothèque compatible est déjà
-   présente, elle est utilisée directement. Windows nécessite
-   [.NET Framework 4.8 ou 4.8.1](https://learn.microsoft.com/dotnet/framework/install/versions-and-dependencies).
-   Pour importer depuis les archives du jeu, indiquez le chemin de GTA V Legacy
-   dans **Paramètres → Chemin de GTA V…**. Vous pouvez ouvrir des fichiers
-   YFT locaux sans installer le jeu.
+1. Téléchargez puis lancez [l’installateur pour Windows x64](https://github.com/Egorika-Studio/Egorika-Vehicle-Studio/releases/latest/download/EgorikaVehicleStudio-Setup-Windows-x64.exe). Choisissez le dossier d’installation et, si vous le souhaitez, créez un raccourci sur le bureau.
+2. Ouvrez Egorika Vehicle Studio depuis le menu Démarrer ou le dossier d’installation. Au premier démarrage, Internet est nécessaire pour télécharger CodeWalker 30 dev46 depuis le site de son auteur et vérifier son SHA-256.
+3. Windows nécessite [.NET Framework 4.8 ou 4.8.1](https://learn.microsoft.com/dotnet/framework/install/versions-and-dependencies). Pour importer les archives du jeu, indiquez le chemin de GTA V Legacy dans **Paramètres → Chemin de GTA V…**. Les fichiers YFT locaux s’ouvrent sans installer le jeu.
 
-Le ZIP contient l’éditeur et SharpDX. L’application télécharge CodeWalker depuis
-[la page de son auteur sur GTA5-Mods](https://www.gta5-mods.com/tools/codewalker-gtav-interactive-3d-map).
-Les fichiers du jeu et les aperçus des véhicules proviennent de votre
-installation locale.
+Pour désinstaller, utilisez le menu Démarrer ou lancez `unins000.exe` depuis le dossier d’installation. Vos projets et vos préférences sont conservés.
 
-Dans **Paramètres → Langue**, choisissez le russe, l’anglais, l’espagnol,
-le français ou le portugais du Brésil. Redémarrez l’application pour appliquer
-le changement.
+Un [ZIP portable](https://github.com/Egorika-Studio/Egorika-Vehicle-Studio/releases/latest/download/EgorikaVehicleStudio-Windows-x64.zip) est aussi disponible. Extrayez-le dans un dossier où vous avez le droit d’écrire et lancez `EgorikaVehicleStudio.exe`.
+
+Dans **Paramètres → Langue**, choisissez le russe, l’anglais, l’espagnol, le français ou le portugais du Brésil. Redémarrez l’application pour appliquer le changement.
 
 ## Mises à jour
 
@@ -38,9 +27,7 @@ vérifie la version et le SHA-256 de l’EXE téléchargé à partir des métado
 de GitHub. Enregistrez vos projets et fermez l’éditeur. L’application remplace
 l’EXE et redémarre.
 
-L’ancienne version est conservée sous le nom `previous.exe` dans un dossier
-`.egorika-update-*` à côté de l’application. Pour revenir à cette version,
-fermez l’éditeur et restaurez l’EXE depuis cette copie.
+L’EXE précédent est conservé sous le nom `previous.exe` dans un dossier `.egorika-update-*`, sous `runtime` pour la version installée et à côté de l’EXE pour la version portable.
 
 ## Compiler depuis les sources
 
@@ -53,6 +40,8 @@ Pour publier une version, incrémentez `VERSION`, exécutez
 `dist\v<version>` à une release GitHub portant le tag `v<version>`.
 Le ZIP sert à la première installation. L’EXE seul sert aux mises à jour
 depuis l’application.
+
+Pour générer l’installateur avec le ZIP et l’EXE de mise à jour, passez `-InnoSetupCompiler` à `package-release.ps1`.
 
 ## Licences
 

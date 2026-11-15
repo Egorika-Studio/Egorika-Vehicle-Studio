@@ -1,4 +1,7 @@
-param([Parameter(Mandatory)][string]$CodeWalkerDirectory)
+param(
+    [Parameter(Mandatory)][string]$CodeWalkerDirectory,
+    [string]$InnoSetupCompiler = (Get-Command ISCC.exe -ErrorAction SilentlyContinue).Source
+)
 $ErrorActionPreference = 'Stop'
 $version = (Get-Content (Join-Path $PSScriptRoot 'VERSION') -Raw).Trim()
 $stage = Join-Path $PSScriptRoot ("dist\v" + $version)
@@ -21,3 +24,8 @@ foreach ($file in 'LICENSE', 'SharpDX-LICENSE.txt', 'README.md') {
 $zip = Join-Path $stage 'EgorikaVehicleStudio-Windows-x64.zip'
 Compress-Archive -LiteralPath (Get-ChildItem $portable -File).FullName -DestinationPath $zip -Force
 Get-Item -LiteralPath (Join-Path $stage 'EgorikaVehicleStudio.exe'), $zip
+if ($InnoSetupCompiler) {
+    & $InnoSetupCompiler "/O$stage" "/DAppVersion=$version" "/DBuildDir=$scratch" (Join-Path $PSScriptRoot 'packaging\vehicle-studio.iss')
+    if ($LASTEXITCODE -ne 0) { throw 'Installer compilation failed.' }
+    Get-Item -LiteralPath (Join-Path $stage 'EgorikaVehicleStudio-Setup-Windows-x64.exe')
+}
