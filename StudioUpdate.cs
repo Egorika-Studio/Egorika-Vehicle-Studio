@@ -228,14 +228,13 @@ namespace SentinelViewer
                         " (" + StudioUpdate.Current.ToString(3) + ")", AppName);
                     return;
                 }
-                updateNotice.Content = Ui.Text("Доступно обновление ", "Update available: ") + release.Version.ToString(3);
-                updateNotice.Visibility = Visibility.Visible;
+                ShowUpdateNotice(Ui.Text("Доступно обновление ", "Update available: ") + release.Version.ToString(3));
                 if (automatic) return;
                 if (MessageBox.Show(this, Ui.Text("Скачать версию ", "Download version ") + release.Version.ToString(3) +
                     Ui.Text(" и установить при следующем запуске?", " and install it at the next launch?"),
                     AppName, MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No) != MessageBoxResult.Yes) return;
                 await Task.Run(() => StudioUpdate.Stage(release));
-                updateNotice.Content = Ui.Text("Обновление готово к следующему запуску.", "Update ready for the next launch.");
+                ShowUpdateNotice(Ui.Text("Обновление готово к следующему запуску.", "Update ready for the next launch."));
                 ShowUpdateReady();
             }
             catch (Exception ex)
@@ -243,6 +242,13 @@ namespace SentinelViewer
                 if (!automatic) MessageBox.Show(this, Ui.Text("Не удалось обновиться. ", "Could not update. ") + ex.Message, AppName);
             }
             finally { checkingStudioUpdate = false; }
+        }
+
+        void ShowUpdateNotice(string text)
+        {
+            updateNotice.ToolTip = text;
+            System.Windows.Automation.AutomationProperties.SetName(updateNotice, text);
+            updateNotice.Visibility = Visibility.Visible;
         }
 
         void ShowUpdateReady()

@@ -80,8 +80,20 @@ namespace SentinelViewer
         {
             var menu = new Menu { Background = StudioTheme.Background, Margin = new Thickness(3, 1, 3, 2) };
             menu.Resources[typeof(MenuItem)] = StudioTheme.MainMenuItemStyle();
-            DockPanel.SetDock(menu, Dock.Top);
-            layout.Children.Add(menu);
+            var header = new DockPanel { Background = StudioTheme.Background };
+            var version = new TextBlock { Text = "v" + StudioUpdate.Current.ToString(3), FontSize = 12,
+                Foreground = new SolidColorBrush(Color.FromRgb(205, 205, 205)),
+                Margin = new Thickness(0, 0, 8, 0), VerticalAlignment = VerticalAlignment.Center };
+            var releaseStatus = new StackPanel { Orientation = Orientation.Horizontal,
+                VerticalAlignment = VerticalAlignment.Center };
+            releaseStatus.Children.Add(updateNotice);
+            releaseStatus.Children.Add(version);
+            updateNotice.Click += (s, e) => CheckForStudioUpdate();
+            DockPanel.SetDock(releaseStatus, Dock.Right);
+            header.Children.Add(releaseStatus);
+            header.Children.Add(menu);
+            DockPanel.SetDock(header, Dock.Top);
+            layout.Children.Add(header);
             var file = AddMenu(menu, Ui.Text("Файл", "File"));
             AddMenu(file, Ui.Text("Новый проект…", "New project…"), NewProject);
             AddMenu(file, Ui.Text("Открыть проект…", "Open project…"), PickProject);

@@ -52,8 +52,9 @@ namespace SentinelViewer
         };
         readonly Dictionary<int, int> boneParents = new Dictionary<int, int>();
         readonly TextBlock status = new TextBlock { Margin = new Thickness(10), TextWrapping = TextWrapping.Wrap };
-        readonly Button updateNotice = new Button { Margin = new Thickness(10, 4, 10, 0),
-            Padding = new Thickness(8, 3, 8, 3), HorizontalAlignment = HorizontalAlignment.Left,
+        readonly Button updateNotice = new Button { Content = "↓", Width = 18, Height = 18,
+            Margin = new Thickness(0, 0, 6, 0), Padding = new Thickness(0),
+            Foreground = new SolidColorBrush(Color.FromRgb(100, 190, 255)),
             Visibility = Visibility.Collapsed };
         readonly Viewport3D viewport = new Viewport3D { ClipToBounds = true, IsHitTestVisible = false };
         readonly PerspectiveCamera camera = new PerspectiveCamera { FieldOfView = 42, NearPlaneDistance = 0.12, FarPlaneDistance = 260 };
@@ -162,9 +163,6 @@ namespace SentinelViewer
             };
             DockPanel.SetDock(status, Dock.Bottom);
             layout.Children.Add(status);
-            DockPanel.SetDock(updateNotice, Dock.Bottom);
-            layout.Children.Add(updateNotice);
-            updateNotice.Click += (s, e) => CheckForStudioUpdate();
 
             var playback = new CheckBox { Content = Ui.Text("Ход времени", "Play time"), Margin = new Thickness(0, 0, 12, 0), VerticalAlignment = VerticalAlignment.Center };
             aoEnabled.Checked += (s, e) => RefreshScene();

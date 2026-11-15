@@ -24,7 +24,7 @@ A [portable ZIP](https://github.com/Egorika-Studio/Egorika-Vehicle-Studio/releas
 ## Updates
 
 Vehicle Studio checks public GitHub Releases in the background on startup and
-shows a notification when a newer version is available. If you confirm the
+shows a blue download arrow next to the version when an update is available. If you confirm the
 download, it verifies the EXE against the release metadata and applies it at
 the next launch. You can also check manually in **Help → Check for updates…**.
 
