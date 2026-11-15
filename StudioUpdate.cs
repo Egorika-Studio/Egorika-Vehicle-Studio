@@ -30,23 +30,24 @@ namespace SentinelViewer
 
         internal static Release FindRelease()
         {
-            using (var client = Client())
-            {
-                string releases = "https://api.github.com/repos/" + Repository + "/releases";
-                var latest = ReadRelease(client.DownloadString(new Uri(releases + "/latest")));
-                Version version = ReleaseVersion(latest);
-                if (version == null || version <= Current) return null;
-                string payloadTag = "payload-" + latest.tag_name;
-                var payload = ReadRelease(client.DownloadString(new Uri(releases + "/tags/" + payloadTag)));
-                if (payload == null || payload.tag_name != payloadTag)
-                    throw new InvalidDataException("The update package does not match the public release.");
-                return ReadUpdateAsset(payload, version);
-            }
+            string releases = "https://api.github.com/repos/" + Repository + "/releases";
+            var latest = FetchRelease(releases + "/latest");
+            Version version = ReleaseVersion(latest);
+            if (version == null || version <= Current) return null;
+            string payloadTag = "payload-" + latest.tag_name;
+            var payload = FetchRelease(releases + "/tags/" + payloadTag);
+            if (payload == null || payload.tag_name != payloadTag)
+                throw new InvalidDataException("The update package does not match the public release.");
+            return ReadUpdateAsset(payload, version);
         }
 
-        static ReleaseMetadata ReadRelease(string json)
+        static ReleaseMetadata FetchRelease(string url)
         {
-            return new JavaScriptSerializer().Deserialize<ReleaseMetadata>(json);
+            using (var client = Client())
+            {
+                client.Headers[HttpRequestHeader.Accept] = "application/vnd.github+json";
+                return new JavaScriptSerializer().Deserialize<ReleaseMetadata>(client.DownloadString(new Uri(url)));
+            }
         }
 
         static Version ReleaseVersion(ReleaseMetadata release)
