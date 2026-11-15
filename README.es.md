@@ -21,7 +21,7 @@ En **Ajustes → Idioma** puedes elegir ruso, inglés, español, francés o port
 
 ## Actualizaciones
 
-Vehicle Studio comprueba los lanzamientos públicos de GitHub en segundo plano al iniciarse. Descarga la nueva versión, verifica su SHA-256 y la aplica en el siguiente inicio. También puedes buscar actualizaciones en el menú Ayuda.
+Vehicle Studio comprueba los lanzamientos públicos de GitHub en segundo plano al iniciarse y avisa si hay una versión nueva. La descarga comienza tras la confirmación y la actualización se aplica en el siguiente inicio.
 
 El EXE anterior se guarda como `previous.exe` en una carpeta `.egorika-update-*`, dentro de `runtime` en instalaciones y junto al EXE en la edición portable.
 

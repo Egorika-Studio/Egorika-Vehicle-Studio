@@ -228,12 +228,15 @@ namespace SentinelViewer
                         " (" + StudioUpdate.Current.ToString(3) + ")", AppName);
                     return;
                 }
-                if (!automatic && MessageBox.Show(this, Ui.Text("Скачать версию ", "Download version ") + release.Version.ToString(3) +
+                updateNotice.Content = Ui.Text("Доступно обновление ", "Update available: ") + release.Version.ToString(3);
+                updateNotice.Visibility = Visibility.Visible;
+                if (automatic) return;
+                if (MessageBox.Show(this, Ui.Text("Скачать версию ", "Download version ") + release.Version.ToString(3) +
                     Ui.Text(" и установить при следующем запуске?", " and install it at the next launch?"),
-                    AppName, MessageBoxButton.YesNo) != MessageBoxResult.Yes) return;
+                    AppName, MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No) != MessageBoxResult.Yes) return;
                 await Task.Run(() => StudioUpdate.Stage(release));
-                if (!automatic) ShowUpdateReady();
-                else updateNotice.Visibility = Visibility.Visible;
+                updateNotice.Content = Ui.Text("Обновление готово к следующему запуску.", "Update ready for the next launch.");
+                ShowUpdateReady();
             }
             catch (Exception ex)
             {

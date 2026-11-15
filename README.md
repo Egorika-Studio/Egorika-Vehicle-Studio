@@ -23,10 +23,10 @@ A [portable ZIP](https://github.com/Egorika-Studio/Egorika-Vehicle-Studio/releas
 
 ## Updates
 
-Vehicle Studio checks public GitHub Releases in the background on startup.
-It downloads a newer EXE, verifies its version and SHA-256 against release
-metadata, and applies it at the next launch. You can also check manually in
-**Help → Check for updates…**.
+Vehicle Studio checks public GitHub Releases in the background on startup and
+shows a notification when a newer version is available. If you confirm the
+download, it verifies the EXE against the release metadata and applies it at
+the next launch. You can also check manually in **Help → Check for updates…**.
 
 The previous EXE is kept as `previous.exe` in a `.egorika-update-*` directory, inside `runtime` for installed copies and next to the EXE for portable copies.
 

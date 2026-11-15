@@ -21,7 +21,7 @@ Dans **Paramètres → Langue**, choisissez le russe, l’anglais, l’espagnol,
 
 ## Mises à jour
 
-Au démarrage, Vehicle Studio vérifie en arrière-plan les versions publiques sur GitHub. Il télécharge la nouvelle version, vérifie son SHA-256 et l’installe au prochain lancement. La vérification manuelle reste disponible dans le menu Aide.
+Au démarrage, Vehicle Studio vérifie les versions publiques sur GitHub en arrière-plan et signale les nouvelles versions. Le téléchargement commence après confirmation et la mise à jour s’applique au prochain lancement.
 
 L’EXE précédent est conservé sous le nom `previous.exe` dans un dossier `.egorika-update-*`, sous `runtime` pour la version installée et à côté de l’EXE pour la version portable.
 
