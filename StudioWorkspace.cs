@@ -82,19 +82,19 @@ namespace SentinelViewer
             menu.Resources[typeof(MenuItem)] = StudioTheme.MainMenuItemStyle();
             DockPanel.SetDock(menu, Dock.Top);
             layout.Children.Add(menu);
-            var file = AddMenu(menu, "File");
+            var file = AddMenu(menu, Ui.Text("Файл", "File"));
             AddMenu(file, Ui.Text("Новый проект…", "New project…"), NewProject);
             AddMenu(file, Ui.Text("Открыть проект…", "Open project…"), PickProject);
             AddMenu(file, Ui.Text("Сохранить проект", "Save project"), () => SaveProject(false));
             AddMenu(file, Ui.Text("Сохранить как…", "Save project as…"), () => SaveProject(true));
-            var import = AddMenu(menu, "Import");
+            var import = AddMenu(menu, Ui.Text("Импорт", "Import"));
             AddMenu(import, Ui.Text("Модель YFT…", "Vehicle YFT…"), Open);
             AddMenu(import, Ui.Text("Модель из GTA V…", "Model from GTA V…"), OpenGameVehicle);
             AddMenu(import, Ui.Text("Открыть RPF…", "Open RPF…"), OpenRpfVehicle);
             AddMenu(import, Ui.Text("Папка FiveM…", "FiveM folder…"), OpenPackage);
             AddMenu(import, Ui.Text("Тюнинг YFT…", "Tuning YFT…"), () => { if (ReadyEditor()) tuningEditor.Import(); });
             AddMenu(import, Ui.Text("Готовый carcols…", "Existing carcols…"), () => { if (ReadyEditor()) tuningEditor.OpenCarcols(); });
-            var export = AddMenu(menu, "Export");
+            var export = AddMenu(menu, Ui.Text("Экспорт", "Export"));
             AddMenu(export, Ui.Text("Новый carcols…", "New carcols…"), () => { if (ReadyEditor()) tuningEditor.NewKit(); });
             AddMenu(export, Ui.Text("Новый со statMods…", "New with statMods…"), () => { if (ReadyEditor()) tuningEditor.NewFromExample(); });
             AddMenu(export, Ui.Text("Параметры комплекта…", "Kit settings…"), () => { if (ReadyEditor()) tuningEditor.EditKitSettings(); });
@@ -103,7 +103,13 @@ namespace SentinelViewer
             AddMenu(export, Ui.Text("Весь файл…", "Entire file…"), () => { if (ReadyEditor()) tuningEditor.Export(false); });
             var settings = AddMenu(menu, Ui.Text("Настройки", "Settings"));
             AddMenu(settings, Ui.Text("Путь GTA V…", "GTA V path…"), ConnectGame);
-            AddMenu(settings, "RU / EN", Ui.ChangeLanguage);
+            var languageChoices = AddMenu(settings, Ui.Text("Язык", "Language"));
+            foreach (var language in Ui.Languages)
+            {
+                var option = AddMenu(languageChoices, (Ui.Language == language.Key ? "✓ " : "") + language.Value,
+                    () => Ui.ChangeLanguage(language.Key));
+                option.IsEnabled = Ui.Language != language.Key;
+            }
             AddMenu(settings, Ui.Text("Вернуть раскладку", "Reset layout"), ResetWorkspace);
             var help = AddMenu(menu, Ui.Text("Справка", "Help"));
             AddMenu(help, Ui.Text("Проверить обновления…", "Check for updates…"), CheckForStudioUpdate);
@@ -149,7 +155,8 @@ namespace SentinelViewer
             headerScroll.SizeChanged += (s, e) => header.Width = Math.Max(minimumToolbarWidth, e.NewSize.Width);
             DockPanel.SetDock(headerScroll, Dock.Top);
             viewportArea.Children.Add(headerScroll);
-            var modes = new[] { "Wireframe", "Solid", "Material", "Rendered" };
+            var modes = new[] { Ui.Text("Каркас", "Wireframe"), Ui.Text("Сплошной", "Solid"),
+                Ui.Text("Материалы", "Material"), Ui.Text("Рендер", "Rendered") };
             var shading = new StackPanel { Orientation = Orientation.Horizontal,
                 VerticalAlignment = VerticalAlignment.Top, Margin = new Thickness(4, 0, 0, 0) };
             AddOverlayControls(shading);

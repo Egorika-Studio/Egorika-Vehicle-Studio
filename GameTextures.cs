@@ -35,8 +35,7 @@ namespace SentinelViewer
 
         public GameTextures(string folder)
         {
-            GTA5Keys.LoadFromPath(folder, false, null);
-            archives.Init(folder, false, message => { }, error => { }, false, false);
+            InitializeLegacyArchives(folder);
             var all = archives.AllNoModRpfs.SelectMany(archive => archive.AllEntries.OfType<RpfFileEntry>()).ToArray();
             var list = all.FirstOrDefault(entry => entry.Path.Equals(@"update\update.rpf\common\data\dlclist.xml",
                 StringComparison.OrdinalIgnoreCase));
@@ -52,6 +51,23 @@ namespace SentinelViewer
                 }
             }
             Index(all);
+        }
+
+        void InitializeLegacyArchives(string folder)
+        {
+            // dev46 predates the explicit Legacy/Enhanced argument added in dev48.
+            var loadKeys = typeof(GTA5Keys).GetMethod("LoadFromPath", new[] { typeof(string), typeof(bool), typeof(string) });
+            if (loadKeys != null) loadKeys.Invoke(null, new object[] { folder, false, null });
+            else typeof(GTA5Keys).GetMethod("LoadFromPath", new[] { typeof(string), typeof(string) })
+                .Invoke(null, new object[] { folder, null });
+
+            Action<string> ignore = message => { };
+            var init = typeof(RpfManager).GetMethod("Init", new[]
+                { typeof(string), typeof(bool), typeof(Action<string>), typeof(Action<string>), typeof(bool), typeof(bool) });
+            if (init != null) init.Invoke(archives, new object[] { folder, false, ignore, ignore, false, false });
+            else typeof(RpfManager).GetMethod("Init", new[]
+                { typeof(string), typeof(Action<string>), typeof(Action<string>), typeof(bool), typeof(bool) })
+                .Invoke(archives, new object[] { folder, ignore, ignore, false, false });
         }
 
         GameTextures(RpfFile file)

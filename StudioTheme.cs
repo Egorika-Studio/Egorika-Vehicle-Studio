@@ -43,6 +43,9 @@ namespace SentinelViewer
           <Trigger Property='IsSubmenuOpen' Value='True'>
             <Setter TargetName='Row' Property='Background' Value='#414141'/>
           </Trigger>
+          <Trigger Property='Role' Value='SubmenuHeader'>
+            <Setter TargetName='PART_Popup' Property='Placement' Value='Right'/>
+          </Trigger>
           <Trigger Property='IsEnabled' Value='False'>
             <Setter Property='Opacity' Value='0.45'/>
           </Trigger>

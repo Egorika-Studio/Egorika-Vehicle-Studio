@@ -9,17 +9,21 @@
 
 1. Скачайте [portable ZIP для Windows x64](https://github.com/Egorika-Studio/Egorika-Vehicle-Studio/releases/latest/download/EgorikaVehicleStudio-Windows-x64.zip)
    и распакуйте его в папку, доступную для записи.
-2. Возьмите `CodeWalker.Core.dll` из CodeWalker 30 dev48 и положите рядом с
-   `EgorikaVehicleStudio.exe`. Библиотека поставляется автором CodeWalker.
-   Актуальные сборки доступны в канале релизов его сообщества, ссылка на которое
-   есть на [странице CodeWalker](https://www.gta5-mods.com/tools/codewalker-gtav-interactive-3d-map).
-3. Запустите `EgorikaVehicleStudio.exe`. Для Windows требуется
+2. Запустите `EgorikaVehicleStudio.exe`. При первом запуске потребуется интернет:
+   программа скачает CodeWalker 30 dev46 со страницы распространения автора,
+   проверит SHA-256 библиотеки и разместит её рядом с EXE. Уже установленная
+   совместимая библиотека будет использована как есть.
+   Для Windows требуется
    [.NET Framework 4.8 или 4.8.1](https://learn.microsoft.com/dotnet/framework/install/versions-and-dependencies).
    Для импорта из игровых архивов укажите путь к своей GTA V Legacy через
    **Settings → GTA V path**. Для открытия локальных YFT игра не требуется.
 
-Этим выпуском не распространяются файлы GTA V, готовые изображения из игры,
-демонстрационные модели и DLL CodeWalker.
+В архив входят редактор и SharpDX. CodeWalker загружается с
+[официальной страницы автора на GTA5-Mods](https://www.gta5-mods.com/tools/codewalker-gtav-interactive-3d-map).
+Игровые файлы и превью транспорта берутся из локальной установки.
+
+В **Settings → Language** доступны русский, английский, испанский, французский
+и бразильский португальский. Язык применяется после перезапуска.
 
 ## Обновления
 

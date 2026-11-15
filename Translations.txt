@@ -1,0 +1,206 @@
+File¦Archivo¦Fichier¦Arquivo
+Import¦Importar¦Importer¦Importar
+Export¦Exportar¦Exporter¦Exportar
+Settings¦Ajustes¦Paramètres¦Configurações
+Help¦Ayuda¦Aide¦Ajuda
+Language¦Idioma¦Langue¦Idioma
+Restart the application to apply the language.¦Reinicia la aplicación para aplicar el idioma.¦Redémarrez l’application pour appliquer la langue.¦Reinicie o aplicativo para aplicar o idioma.
+Downloading CodeWalker for first launch…¦Descargando CodeWalker para el primer inicio…¦Téléchargement de CodeWalker pour le premier lancement…¦Baixando o CodeWalker para a primeira execução…
+3D Viewport¦Vista 3D¦Vue 3D¦Vista 3D
+Objects¦Objetos¦Objets¦Objetos
+Tuning editor¦Editor de modificaciones¦Éditeur de modifications¦Editor de modificações
+Carcols preview¦Vista previa de carcols¦Aperçu de carcols¦Prévia do carcols
+VMT categories¦Categorías VMT¦Catégories VMT¦Categorias VMT
+Unassigned¦Sin asignar¦Non assigné¦Não atribuído
+Uncategorized¦Sin categoría¦Sans catégorie¦Sem categoria
+Project¦Proyecto¦Projet¦Projeto
+Projects¦Proyectos¦Projets¦Projetos
+New project¦Nuevo proyecto¦Nouveau projet¦Novo projeto
+New project…¦Nuevo proyecto…¦Nouveau projet…¦Novo projeto…
+Open project…¦Abrir proyecto…¦Ouvrir un projet…¦Abrir projeto…
+Recent projects¦Proyectos recientes¦Projets récents¦Projetos recentes
+No saved projects yet¦Aún no hay proyectos guardados¦Aucun projet enregistré¦Nenhum projeto salvo
+Save project¦Guardar proyecto¦Enregistrer le projet¦Salvar projeto
+Save project as…¦Guardar proyecto como…¦Enregistrer le projet sous…¦Salvar projeto como…
+Create a new project and close the current one?¦¿Crear un proyecto nuevo y cerrar el actual?¦Créer un nouveau projet et fermer le projet actuel ?¦Criar um projeto novo e fechar o atual?
+New project. Select a model from Import.¦Proyecto nuevo. Selecciona un modelo en Importar.¦Nouveau projet. Sélectionnez un modèle dans Importer.¦Novo projeto. Selecione um modelo em Importar.
+Opening project…¦Abriendo proyecto…¦Ouverture du projet…¦Abrindo projeto…
+Open a vehicle before saving a project.¦Abre un vehículo antes de guardar el proyecto.¦Ouvrez un véhicule avant d’enregistrer le projet.¦Abra um veículo antes de salvar o projeto.
+Project saved:¦Proyecto guardado:¦Projet enregistré :¦Projeto salvo:
+Project error:¦Error del proyecto:¦Erreur du projet :¦Erro no projeto:
+Unsupported project version.¦Versión de proyecto no compatible.¦Version de projet non prise en charge.¦Versão de projeto incompatível.
+The archive has no project.¦El archivo no contiene un proyecto.¦L’archive ne contient aucun projet.¦O arquivo não contém um projeto.
+The project has no vehicle.¦El proyecto no tiene vehículo.¦Le projet ne contient aucun véhicule.¦O projeto não contém um veículo.
+Vehicle YFT…¦YFT de vehículo…¦YFT de véhicule…¦YFT de veículo…
+Model from GTA V…¦Modelo de GTA V…¦Modèle de GTA V…¦Modelo do GTA V…
+Open RPF…¦Abrir RPF…¦Ouvrir un RPF…¦Abrir RPF…
+FiveM folder…¦Carpeta de FiveM…¦Dossier FiveM…¦Pasta do FiveM…
+Tuning YFT…¦YFT de modificaciones…¦YFT de modification…¦YFT de modificações…
+Existing carcols…¦carcols existente…¦carcols existant…¦carcols existente…
+New carcols¦Nuevo carcols¦Nouveau carcols¦Novo carcols
+New carcols…¦Nuevo carcols…¦Nouveau carcols…¦Novo carcols…
+New with statMods…¦Nuevo con statMods…¦Nouveau avec statMods…¦Novo com statMods…
+Kit settings…¦Ajustes del kit…¦Paramètres du kit…¦Configurações do kit…
+Carcols kit settings¦Ajustes del kit carcols¦Paramètres du kit carcols¦Configurações do kit carcols
+Kit ID¦ID del kit¦ID du kit¦ID do kit
+Kit name¦Nombre del kit¦Nom du kit¦Nome do kit
+Current vehicle only…¦Solo el vehículo actual…¦Véhicule actuel uniquement…¦Somente o veículo atual…
+Entire file…¦Archivo completo…¦Fichier complet…¦Arquivo completo…
+Export carcols.meta¦Exportar carcols.meta¦Exporter carcols.meta¦Exportar carcols.meta
+Export current vehicle¦Exportar el vehículo actual¦Exporter le véhicule actuel¦Exportar o veículo atual
+Export entire carcols¦Exportar todo el carcols¦Exporter le carcols complet¦Exportar o carcols completo
+GTA V path…¦Ruta de GTA V…¦Chemin de GTA V…¦Caminho do GTA V…
+Reset layout¦Restablecer disposición¦Réinitialiser la disposition¦Redefinir layout
+Detach window¦Separar ventana¦Détacher la fenêtre¦Desencaixar janela
+Dock window¦Acoplar ventana¦Ancrer la fenêtre¦Encaixar janela
+Swap with:¦Intercambiar con:¦Échanger avec :¦Trocar com:
+Check for updates…¦Buscar actualizaciones…¦Rechercher des mises à jour…¦Verificar atualizações…
+No new version is available.¦No hay una versión nueva.¦Aucune nouvelle version disponible.¦Nenhuma versão nova disponível.
+Download version¦Descargar la versión¦Télécharger la version¦Baixar a versão
+and install it when the editor closes?¦e instalarla al cerrar el editor?¦et l’installer à la fermeture de l’éditeur ?¦e instalar ao fechar o editor?
+Could not update.¦No se pudo actualizar.¦Échec de la mise à jour.¦Não foi possível atualizar.
+Update ready. Save your project and close the editor. The new version will start automatically.¦Actualización lista. Guarda el proyecto y cierra el editor. La versión nueva se iniciará automáticamente.¦Mise à jour prête. Enregistrez votre projet et fermez l’éditeur. La nouvelle version démarrera automatiquement.¦Atualização pronta. Salve o projeto e feche o editor. A nova versão abrirá automaticamente.
+Could not download CodeWalker. Check your internet connection and folder permissions, then launch the app again.¦No se pudo descargar CodeWalker. Comprueba la conexión y los permisos de la carpeta y vuelve a iniciar la aplicación.¦Impossible de télécharger CodeWalker. Vérifiez la connexion et les droits sur le dossier, puis relancez l’application.¦Não foi possível baixar o CodeWalker. Verifique a conexão e as permissões da pasta e abra o aplicativo de novo.
+Primary¦Primario¦Principale¦Primária
+Pri.¦Pri.¦Princ.¦Prim.
+Secondary¦Secundario¦Secondaire¦Secundária
+Sec.¦Sec.¦Sec.¦Sec.
+Pearlescent¦Nacarado¦Nacrée¦Perolada
+Pearl¦Nácar¦Nacre¦Pérola
+Interior¦Interior¦Intérieur¦Interior
+Int.¦Int.¦Int.¦Int.
+Wheels¦Llantas¦Jantes¦Rodas
+Dashboard¦Tablero¦Tableau de bord¦Painel
+Dash¦Tabl.¦T. bord¦Painel
+Apply colors¦Aplicar colores¦Appliquer les couleurs¦Aplicar cores
+Apply¦Aplicar¦Appliquer¦Aplicar
+Load carvariations.meta¦Cargar carvariations.meta¦Charger carvariations.meta¦Carregar carvariations.meta
+Load carvariations.meta first¦Carga primero carvariations.meta¦Chargez d’abord carvariations.meta¦Carregue carvariations.meta primeiro
+Spawn colors¦Colores de aparición¦Couleurs d’apparition¦Cores de surgimento
+GTA V palette:¦Paleta de GTA V:¦Palette GTA V :¦Paleta do GTA V:
+Original color¦Color original¦Couleur d’origine¦Cor original
+Paint color¦Color de la pintura¦Couleur de peinture¦Cor da pintura
+#RRGGBB. Leave blank to restore the original color.¦#RRGGBB. Deja el campo vacío para recuperar el color original.¦#RRGGBB. Laissez vide pour rétablir la couleur d’origine.¦#RRGGBB. Deixe em branco para restaurar a cor original.
+Enter #RRGGBB or select Chrome from the palette.¦Introduce #RRGGBB o elige Chrome en la paleta.¦Saisissez #RRGGBB ou sélectionnez Chrome dans la palette.¦Digite #RRGGBB ou selecione Chrome na paleta.
+Wireframe¦Malla alámbrica¦Filaire¦Aramado
+Solid¦Sólido¦Solide¦Sólido
+Material¦Material¦Matériau¦Material
+Rendered¦Renderizado¦Rendu¦Renderizado
+Viewport overlays¦Superposiciones de la vista¦Incrustations de la vue¦Sobreposições da vista
+X-Ray all materials¦Rayos X en todos los materiales¦Rayons X sur tous les matériaux¦Raio X em todos os materiais
+Floor grid¦Cuadrícula del suelo¦Grille du sol¦Grade do piso
+Grid scale¦Escala de la cuadrícula¦Échelle de la grille¦Escala da grade
+Grid extent¦Extensión de la cuadrícula¦Étendue de la grille¦Extensão da grade
+X / Y / Z axes¦Ejes X / Y / Z¦Axes X / Y / Z¦Eixos X / Y / Z
+Origin¦Origen¦Origine¦Origem
+Statistics¦Estadísticas¦Statistiques¦Estatísticas
+Model info¦Información del modelo¦Informations sur le modèle¦Informações do modelo
+Tuning outline¦Contorno de las modificaciones¦Contour des modifications¦Contorno das modificações
+Scene sky¦Cielo de la escena¦Ciel de la scène¦Céu da cena
+Zoom in¦Acercar¦Zoom avant¦Aproximar
+Zoom out¦Alejar¦Zoom arrière¦Afastar
+Pan¦Desplazar¦Déplacer la vue¦Deslocar
+Frame vehicle¦Encuadrar el vehículo¦Cadrer le véhicule¦Enquadrar veículo
+Free camera¦Cámara libre¦Caméra libre¦Câmera livre
+Free camera / orbit¦Cámara libre / órbita¦Caméra libre / orbite¦Câmera livre / órbita
+Orthographic projection¦Proyección ortográfica¦Projection orthographique¦Projeção ortográfica
+Orthographic / perspective¦Ortográfica / perspectiva¦Orthographique / perspective¦Ortográfica / perspectiva
+Front · NumPad 1¦Frontal · NumPad 1¦Avant · NumPad 1¦Frente · NumPad 1
+Rear · Ctrl+NumPad 1¦Trasera · Ctrl+NumPad 1¦Arrière · Ctrl+NumPad 1¦Traseira · Ctrl+NumPad 1
+Right · NumPad 3¦Derecha · NumPad 3¦Droite · NumPad 3¦Direita · NumPad 3
+Left · Ctrl+NumPad 3¦Izquierda · Ctrl+NumPad 3¦Gauche · Ctrl+NumPad 3¦Esquerda · Ctrl+NumPad 3
+Top · NumPad 7¦Superior · NumPad 7¦Dessus · NumPad 7¦Superior · NumPad 7
+Bottom · Ctrl+NumPad 7¦Inferior · Ctrl+NumPad 7¦Dessous · Ctrl+NumPad 7¦Inferior · Ctrl+NumPad 7
+Time¦Hora¦Heure¦Hora
+Time (HH:MM)¦Hora (HH:MM)¦Heure (HH:MM)¦Hora (HH:MM)
+Play time¦Avanzar el tiempo¦Faire défiler le temps¦Avançar o tempo
+Reflections¦Reflejos¦Reflets¦Reflexos
+Reflections (%)¦Reflejos (%)¦Reflets (%)¦Reflexos (%)
+Background¦Fondo¦Arrière-plan¦Fundo
+No scene¦Sin escena¦Sans scène¦Sem cena
+Studio floor¦Suelo de estudio¦Sol de studio¦Piso de estúdio
+Road¦Carretera¦Route¦Estrada
+Decrease¦Reducir¦Diminuer¦Diminuir
+Increase¦Aumentar¦Augmenter¦Aumentar
+· click to type, drag to adjust¦· clic para escribir, arrastra para ajustar¦· cliquez pour saisir, glissez pour ajuster¦· clique para digitar, arraste para ajustar
+LOD from _hi.yft¦LOD de _hi.yft¦LOD issus de _hi.yft¦LOD de _hi.yft
+Hide all¦Ocultar todo¦Tout masquer¦Ocultar tudo
+Show all¦Mostrar todo¦Tout afficher¦Mostrar tudo
+Hide child parts¦Ocultar piezas secundarias¦Masquer les pièces enfants¦Ocultar peças filhas
+Search XML¦Buscar en XML¦Rechercher dans le XML¦Buscar no XML
+Fit / restore stock¦Montar / restaurar la pieza de serie¦Monter / rétablir la pièce d’origine¦Instalar / restaurar a peça original
+Hold a part here to add it to linkedModels¦Mantén una pieza aquí para añadirla a linkedModels¦Maintenez une pièce ici pour l’ajouter à linkedModels¦Segure uma peça aqui para adicioná-la a linkedModels
+Drag to another part to add a shared reference¦Arrastra a otra pieza para añadir una referencia compartida¦Glissez vers une autre pièce pour ajouter une référence partagée¦Arraste para outra peça para adicionar uma referência compartilhada
+Drop a linked part here¦Suelta aquí una pieza vinculada¦Déposez ici une pièce liée¦Solte aqui uma peça vinculada
+Remove from list¦Quitar de la lista¦Retirer de la liste¦Remover da lista
+Open¦Abrir¦Ouvrir¦Abrir
+Done¦Listo¦Terminé¦Concluir
+Livery¦Decoración¦Livrée¦Pintura decorativa
+No livery¦Sin decoración¦Sans livrée¦Sem pintura decorativa
+Livery texture not found. Connect the GTA V archives or open a livery YFT.¦No se encontró la textura. Conecta los archivos de GTA V o abre el YFT de la decoración.¦Texture introuvable. Connectez les archives GTA V ou ouvrez le YFT de la livrée.¦Textura não encontrada. Conecte os arquivos do GTA V ou abra o YFT da pintura.
+No livery texture was found in this YFT.¦No se encontró la textura de decoración en este YFT.¦Aucune texture de livrée dans ce YFT.¦Nenhuma textura de pintura encontrada neste YFT.
+Open a .yft model. Drag to orbit, scroll to zoom.¦Abre un modelo .yft. Arrastra para girar y usa la rueda para acercar.¦Ouvrez un modèle .yft. Glissez pour tourner et utilisez la molette pour zoomer.¦Abra um modelo .yft. Arraste para girar e use a roda para dar zoom.
+Open a vehicle YFT first.¦Abre primero el YFT de un vehículo.¦Ouvrez d’abord le YFT d’un véhicule.¦Abra primeiro o YFT de um veículo.
+Main vehicle YFT¦YFT principal del vehículo¦YFT principal du véhicule¦YFT principal do veículo
+Optional _hi.yft¦_hi.yft opcional¦_hi.yft facultatif¦_hi.yft opcional
+Open carvariations.meta¦Abrir carvariations.meta¦Ouvrir carvariations.meta¦Abrir carvariations.meta
+Open an RPF archive¦Abrir un archivo RPF¦Ouvrir une archive RPF¦Abrir um arquivo RPF
+Select a FiveM resource folder¦Selecciona una carpeta de recurso FiveM¦Sélectionnez le dossier d’une ressource FiveM¦Selecione a pasta de um recurso FiveM
+Select a model and version¦Selecciona un modelo y una versión¦Sélectionnez un modèle et une version¦Selecione um modelo e uma versão
+Select a model from the folder¦Selecciona un modelo de la carpeta¦Sélectionnez un modèle dans le dossier¦Selecione um modelo da pasta
+Select GTA5.exe from GTA V Legacy¦Selecciona GTA5.exe de GTA V Legacy¦Sélectionnez GTA5.exe de GTA V Legacy¦Selecione o GTA5.exe do GTA V Legacy
+Wait for the vehicle to finish loading.¦Espera a que se cargue el vehículo.¦Attendez la fin du chargement du véhicule.¦Aguarde o carregamento do veículo.
+GTA V archives connected. Open a YFT.¦Archivos de GTA V conectados. Abre un YFT.¦Archives GTA V connectées. Ouvrez un YFT.¦Arquivos do GTA V conectados. Abra um YFT.
+No vehicles were found in this folder.¦No se encontraron vehículos en esta carpeta.¦Aucun véhicule trouvé dans ce dossier.¦Nenhum veículo encontrado nesta pasta.
+No vehicles were found in this source.¦No se encontraron vehículos en este origen.¦Aucun véhicule trouvé dans cette source.¦Nenhum veículo encontrado nesta origem.
+Indexing GTA V archives…¦Indexando archivos de GTA V…¦Indexation des archives GTA V…¦Indexando arquivos do GTA V…
+Could not connect GTA V archives¦No se pudieron conectar los archivos de GTA V¦Impossible de connecter les archives GTA V¦Não foi possível conectar os arquivos do GTA V
+Could not read carvariations.meta¦No se pudo leer carvariations.meta¦Impossible de lire carvariations.meta¦Não foi possível ler carvariations.meta
+This file has no colors for the selected model.¦Este archivo no contiene colores para el modelo seleccionado.¦Ce fichier ne contient aucune couleur pour le modèle sélectionné.¦Este arquivo não contém cores para o modelo selecionado.
+GTA V models (*.yft)|*.yft¦Modelos de GTA V (*.yft)|*.yft¦Modèles GTA V (*.yft)|*.yft¦Modelos do GTA V (*.yft)|*.yft
+GTA V tuning (*.yft)|*.yft¦Modificaciones de GTA V (*.yft)|*.yft¦Modifications GTA V (*.yft)|*.yft¦Modificações do GTA V (*.yft)|*.yft
+Load error¦Error de carga¦Erreur de chargement¦Erro de carregamento
+Load error:¦Error de carga:¦Erreur de chargement :¦Erro de carregamento:
+Loading¦Cargando¦Chargement de¦Carregando
+Loaded¦Cargado¦Chargé¦Carregado
+Saved¦Guardado¦Enregistré¦Salvo
+Added:¦Añadido:¦Ajouté :¦Adicionado:
+Import errors¦Errores de importación¦Erreurs d’importation¦Erros de importação
+Invalid part model name.¦Nombre de modelo de pieza no válido.¦Nom de modèle de pièce invalide.¦Nome de modelo da peça inválido.
+Mount bone not found:¦No se encontró el hueso de anclaje:¦Os de fixation introuvable :¦Osso de fixação não encontrado:
+Cannot find¦No se encuentra¦Introuvable :¦Não foi possível encontrar
+.yft. Import the YFT or connect the game archives.¦.yft. Importa el YFT o conecta los archivos del juego.¦.yft. Importez le YFT ou connectez les archives du jeu.¦.yft. Importe o YFT ou conecte os arquivos do jogo.
+The file contains no model.¦El archivo no contiene un modelo.¦Le fichier ne contient aucun modèle.¦O arquivo não contém um modelo.
+The part has no geometry.¦La pieza no tiene geometría.¦La pièce ne contient aucune géométrie.¦A peça não contém geometria.
+The part YFT has no displayable geometry.¦El YFT de la pieza no tiene geometría visible.¦Le YFT de la pièce ne contient aucune géométrie affichable.¦O YFT da peça não contém geometria visível.
+The YFT has no supported geometry.¦El YFT no tiene geometría compatible.¦Le YFT ne contient aucune géométrie prise en charge.¦O YFT não contém geometria compatível.
+This bone has no separate geometry at this LOD¦Este hueso no tiene geometría propia en este LOD¦Cet os n’a pas de géométrie distincte à ce LOD¦Este osso não tem geometria separada neste LOD
+The selected part has no geometry to isolate.¦La pieza seleccionada no tiene geometría para aislar.¦La pièce sélectionnée n’a aucune géométrie à isoler.¦A peça selecionada não tem geometria para isolar.
+Select a part or bone in the tree.¦Selecciona una pieza o un hueso en el árbol.¦Sélectionnez une pièce ou un os dans l’arborescence.¦Selecione uma peça ou um osso na árvore.
+Could not read geometry:¦No se pudo leer la geometría:¦Impossible de lire la géométrie :¦Não foi possível ler a geometria:
+Reading carcols¦Lectura de carcols¦Lecture de carcols¦Leitura do carcols
+Open carcols¦Abrir carcols¦Ouvrir carcols¦Abrir carcols
+Open kit¦Abrir kit¦Ouvrir le kit¦Abrir kit
+Select a kit¦Selecciona un kit¦Sélectionnez un kit¦Selecione um kit
+No Kits were found in this file.¦No se encontraron Kits en este archivo.¦Aucun élément Kits dans ce fichier.¦Nenhum elemento Kits encontrado neste arquivo.
+Replace the table with the selected kit?¦¿Sustituir la tabla por el kit seleccionado?¦Remplacer le tableau par le kit sélectionné ?¦Substituir a tabela pelo kit selecionado?
+Clear the current kit and create a new one?¦¿Vaciar el kit actual y crear otro?¦Effacer le kit actuel et en créer un nouveau ?¦Limpar o kit atual e criar um novo?
+New kit. Enter an ID and import YFT files.¦Kit nuevo. Introduce un ID e importa archivos YFT.¦Nouveau kit. Saisissez un ID et importez des fichiers YFT.¦Novo kit. Digite um ID e importe os arquivos YFT.
+New kit. statMods copied from the example.¦Kit nuevo. Se copiaron los statMods del ejemplo.¦Nouveau kit. Les statMods ont été copiés de l’exemple.¦Novo kit. Os statMods foram copiados do exemplo.
+Enter a kit name.¦Introduce el nombre del kit.¦Saisissez un nom de kit.¦Digite um nome para o kit.
+Enter a numeric kit ID from 0 to 65535.¦Introduce un ID numérico entre 0 y 65535.¦Saisissez un ID numérique compris entre 0 et 65535.¦Digite um ID numérico de 0 a 65535.
+Enter a model name and bone for each linked model.¦Introduce un nombre y un hueso para cada modelo vinculado.¦Saisissez un nom et un os pour chaque modèle lié.¦Digite um nome e um osso para cada modelo vinculado.
+Import at least one part.¦Importa al menos una pieza.¦Importez au moins une pièce.¦Importe pelo menos uma peça.
+: fill in the label, type and both bones.¦: completa el nombre, el tipo y ambos huesos.¦ : renseignez le libellé, le type et les deux os.¦: preencha o rótulo, o tipo e os dois ossos.
+. Drag parts into VMT categories.¦. Arrastra las piezas a categorías VMT.¦. Glissez les pièces dans les catégories VMT.¦. Arraste as peças para categorias VMT.
+· parts:¦· piezas:¦· pièces :¦· peças:
+· Special¦· Especial¦· Spécial¦· Especial
+· Sport¦· Deportivo¦· Sport¦· Esportivo
+· Standard¦· Estándar¦· Standard¦· Padrão
+· SUV¦· SUV¦· SUV¦· SUV
+{0}   •   Triangles {1:N0} of {2:N0}   •   Bone bindings {3}¦{0}   •   Triángulos {1:N0} de {2:N0}   •   Anclajes a huesos {3}¦{0}   •   Triangles {1:N0} sur {2:N0}   •   Attaches d’os {3}¦{0}   •   Triângulos {1:N0} de {2:N0}   •   Vínculos com ossos {3}
+•   Local view:¦•   Vista aislada:¦•   Vue locale :¦•   Vista isolada:
+•   Missing textures:¦•   Texturas ausentes:¦•   Textures manquantes :¦•   Texturas ausentes:
+•   Preview:¦•   Vista previa:¦•   Aperçu :¦•   Prévia:
+•   Texture errors:¦•   Errores de textura:¦•   Erreurs de texture :¦•   Erros de textura:
+•   WASD to fly, Q/E down/up, Shift to accelerate¦•   WASD para volar, Q/E para bajar/subir, Mayús para acelerar¦•   WASD pour voler, Q/E descendre/monter, Maj pour accélérer¦•   WASD para voar, Q/E descer/subir, Shift para acelerar

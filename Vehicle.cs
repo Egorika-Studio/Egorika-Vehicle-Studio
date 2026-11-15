@@ -499,8 +499,7 @@ namespace SentinelViewer
                                 for (int i = 0; i < pixels.Length; i += 4)
                                     for (int c = 0; c < 3; c++)
                                         pixels[i + c] = (byte)Math.Round(255 * Math.Pow(pixels[i + c] / 255.0, 0.56));
-                            var bitmap = BitmapSource.Create(texture.Width, texture.Height, 96, 96,
-                                PixelFormats.Bgra32, null, pixels, texture.Width * 4);
+                            var bitmap = TextureBitmap(texture, pixels);
                             bitmap.Freeze();
                             image = bitmap;
                             for (int i = 3; i < pixels.Length; i += 4)
@@ -537,6 +536,17 @@ namespace SentinelViewer
             return new DiffuseMaterial(new SolidColorBrush(glass ? Color.FromArgb(52, 120, 153, 174) : Color.FromRgb(135, 151, 170)));
         }
 
+        // These properties moved from Texture to TextureBase between CodeWalker builds.
+        static readonly System.Reflection.PropertyInfo textureWidth = typeof(Texture).GetProperty("Width");
+        static readonly System.Reflection.PropertyInfo textureHeight = typeof(Texture).GetProperty("Height");
+
+        static BitmapSource TextureBitmap(Texture texture, byte[] pixels)
+        {
+            int width = Convert.ToInt32(textureWidth.GetValue(texture, null));
+            int height = Convert.ToInt32(textureHeight.GetValue(texture, null));
+            return BitmapSource.Create(width, height, 96, 96, PixelFormats.Bgra32, null, pixels, width * 4);
+        }
+
         public static Texture LiveryTexture(YftFile file)
         {
             var drawable = file == null || file.Fragment == null ? null : file.Fragment.Drawable;
@@ -568,8 +578,7 @@ namespace SentinelViewer
         static Material CreateLiveryMaterial(Texture texture)
         {
             if (texture == null) return null;
-            var bitmap = BitmapSource.Create(texture.Width, texture.Height, 96, 96, PixelFormats.Bgra32,
-                null, DDSIO.GetPixels(texture, 0), texture.Width * 4);
+            var bitmap = TextureBitmap(texture, DDSIO.GetPixels(texture, 0));
             var material = new DiffuseMaterial(new ImageBrush(bitmap) { Stretch = Stretch.Fill,
                 ViewportUnits = BrushMappingMode.Absolute, Viewport = new Rect(0, 0, 1, 1) });
             material.Freeze();

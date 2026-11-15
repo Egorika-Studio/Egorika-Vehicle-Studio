@@ -1391,6 +1391,26 @@ namespace SentinelViewer
         {
             if (args.Length == 4 && args[0] == "--apply-studio-update")
                 return StudioUpdate.Apply(args[1], args[2], args[3]);
+            try
+            {
+                if (args.Length == 0) StudioDependencies.PrepareForLaunch();
+                else StudioDependencies.EnsureCodeWalker();
+            }
+            catch (Exception ex)
+            {
+                string message = Ui.Text(
+                    "Не удалось загрузить CodeWalker. Проверьте интернет и право записи в папку программы, затем запустите её снова.",
+                    "Could not download CodeWalker. Check your internet connection and folder permissions, then launch the app again.");
+                if (args.Length >= 2 && args[0] == "--check") File.WriteAllText(args[1], message + Environment.NewLine + ex);
+                else MessageBox.Show(message + Environment.NewLine + ex.Message, AppName, MessageBoxButton.OK, MessageBoxImage.Error);
+                return 1;
+            }
+            return RunStudio(args);
+        }
+
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
+        static int RunStudio(string[] args)
+        {
             if (args.Length >= 4 && args[0] == "--bake-thumbnails")
             {
                 VehicleCatalogRow.Bake(new GameTextures(args[1]), args[2], args.Skip(3).ToArray());
@@ -1411,6 +1431,10 @@ namespace SentinelViewer
 
         static int Check(string[] args)
         {
+            if (Ui.Translate("es", "Файл", "File") != "Archivo" ||
+                Ui.Translate("fr", "Файл", "File") != "Fichier" ||
+                Ui.Translate("pt-BR", "Файл", "File") != "Arquivo")
+                throw new InvalidOperationException("Interface translations were not loaded.");
             if (Environment.GetEnvironmentVariable("SENTINEL_CHECK_EN") == "1") Ui.UseEnglishForCheck();
             string gta = Environment.GetEnvironmentVariable("SENTINEL_CHECK_GTA_PATH");
             var game = String.IsNullOrEmpty(gta) ? null : new GameTextures(gta);
