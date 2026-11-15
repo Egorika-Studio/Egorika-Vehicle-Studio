@@ -18,7 +18,7 @@ namespace SentinelViewer
     sealed partial class Viewer
     {
         const string ProjectFilter = "Egorika Vehicle Project (*.egvehicle)|*.egvehicle";
-        static readonly string RecentPath = Path.Combine(Path.GetDirectoryName(GameSettings), "recent-projects.txt");
+        static readonly string RecentPath = StudioPaths.Setting("recent-projects.txt");
         string projectPath;
 
         async Task<bool> EnsureArchives()

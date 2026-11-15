@@ -41,7 +41,7 @@ namespace SentinelViewer
             title.Text = item == null ? System.IO.Path.GetFileNameWithoutExtension(local) : item.Name;
             path.Text = item == null ? local : item.ToString().Substring(item.Name.Length + 5);
             string file = item == null ? CustomPath(local) : item.Source.OriginRpf == null
-                ? System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "thumbnails", item.Name + ".png")
+                ? System.IO.Path.Combine(StudioPaths.Thumbnails, item.Name + ".png")
                 : CustomPath(item.Source.OriginRpf + "|" + item.ToString());
             if (!System.IO.File.Exists(file)) return;
             try
@@ -73,8 +73,7 @@ namespace SentinelViewer
         static string CustomPath(string key)
         {
             using (var hash = System.Security.Cryptography.SHA256.Create())
-                return System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                    "SentinelViewer", "thumbnails", BitConverter.ToString(hash.ComputeHash(
+                return StudioPaths.ModThumbnail(BitConverter.ToString(hash.ComputeHash(
                     System.Text.Encoding.UTF8.GetBytes(key.ToUpperInvariant()))).Replace("-", "") + ".png");
         }
 

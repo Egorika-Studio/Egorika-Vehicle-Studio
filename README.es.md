@@ -9,7 +9,7 @@ y el borrador en un proyecto `.egvehicle`.
 
 ## Descarga e inicio
 
-1. Descarga el [instalador para Windows x64](https://github.com/Egorika-Studio/Egorika-Vehicle-Studio/releases/latest/download/EgorikaVehicleStudio-Setup-Windows-x64.exe) y ejecútalo. Elige la carpeta de instalación y, si quieres, crea un acceso directo en el escritorio.
+1. Descarga el [instalador para Windows x64](https://github.com/Egorika-Studio/Egorika-Vehicle-Studio/releases/latest/download/EgorikaVehicleStudio-OnlineSetup-Windows-x64.exe) y ejecútalo. Elige la carpeta de instalación y, si quieres, crea un acceso directo en el escritorio.
 2. Abre Egorika Vehicle Studio desde el menú Inicio o desde la carpeta de instalación. La primera ejecución requiere internet para descargar CodeWalker 30 dev46 desde el sitio del autor y comprobar su SHA-256.
 3. Windows requiere [.NET Framework 4.8 o 4.8.1](https://learn.microsoft.com/dotnet/framework/install/versions-and-dependencies). Para importar los archivos del juego, indica la ruta de GTA V Legacy en **Ajustes → Ruta de GTA V…**. Puedes abrir archivos YFT locales sin instalar el juego.
 

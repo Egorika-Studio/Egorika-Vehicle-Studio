@@ -9,8 +9,7 @@ namespace SentinelViewer
 {
     static class Ui
     {
-        static readonly string LanguagePath = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SentinelViewer", "language.txt");
+        static readonly string LanguagePath = StudioPaths.Setting("language.txt");
         internal static readonly KeyValuePair<string, string>[] Languages =
         {
             new KeyValuePair<string, string>("ru", "Русский"),

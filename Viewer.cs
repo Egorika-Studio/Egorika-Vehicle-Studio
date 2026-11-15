@@ -74,7 +74,7 @@ namespace SentinelViewer
         Border stage;
         readonly ComboBox spawnColors = new ComboBox { Width = 235, Margin = new Thickness(0, 0, 8, 0) };
         readonly Dictionary<int, TextBox> paintFields = new Dictionary<int, TextBox>();
-        readonly string textureLibrary = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "textures"));
+        readonly string textureLibrary = Path.Combine(StudioPaths.Root, "textures");
         Point3D freePosition;
         double flyPitch, flyYaw;
         double flightSpeed = 2.5;
@@ -87,8 +87,7 @@ namespace SentinelViewer
         string autoCarcols;
         readonly List<string> previewFolders = new List<string>();
         string gameFolder;
-        static readonly string GameSettings = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SentinelViewer", "gta-folder.txt");
+        static readonly string GameSettings = StudioPaths.Setting("gta-folder.txt");
         static readonly string SteamGameFolder = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86),
             "Steam", "steamapps", "common", "Grand Theft Auto V");
@@ -989,9 +988,16 @@ namespace SentinelViewer
             string variations = FindPackageMetadata(metaFolder, "carvariations", name);
             projectVariations = variations;
             Load(model, high, paths, loaded, autoCarcols, variations);
-            if (thumbnailKey != null && vehicle == loaded)
-                await Dispatcher.InvokeAsync(() => VehicleCatalogRow.CacheOpened(thumbnailKey,
-                    loaded.Levels.Values.First()), DispatcherPriority.ApplicationIdle).Task;
+            await CacheVehicleThumbnail(thumbnailKey, loaded);
+        }
+
+        async Task CacheVehicleThumbnail(string key, Vehicle loaded)
+        {
+            if (key == null || vehicle != loaded) return;
+            var pieces = loaded.Levels.Values.FirstOrDefault();
+            if (pieces == null) return;
+            await Dispatcher.InvokeAsync(() => VehicleCatalogRow.CacheOpened(key, pieces),
+                DispatcherPriority.ApplicationIdle).Task;
         }
 
         static string FindPackageMetadata(string folder, string kind, string name)
@@ -1035,12 +1041,13 @@ namespace SentinelViewer
             loading = true;
             try
             {
-                string normal = args[0], high = args.Length > 1 ? args[1] : null;
+                string normal = Path.GetFullPath(args[0]), high = args.Length > 1 ? args[1] : null;
                 var paths = args.Length > 2 ? args.Skip(2).ToArray() :
                     DictionaryFiles(Path.GetDirectoryName(normal), Path.GetFileNameWithoutExtension(normal)).ToArray();
                 await ConnectSavedArchives();
                 var model = await Task.Run(() => new Vehicle(normal, high, paths, gameTextures));
                 Load(normal, high, paths, model);
+                await CacheVehicleThumbnail(normal, model);
             }
             catch (Exception ex) { status.Text = ex.Message; }
             finally { loading = false; }
@@ -1094,6 +1101,7 @@ namespace SentinelViewer
                 packageFolder = null;
                 autoCarcols = null;
                 Load(normal, high, paths, loaded);
+                await CacheVehicleThumbnail(normal, loaded);
             }
             catch (Exception ex)
             {

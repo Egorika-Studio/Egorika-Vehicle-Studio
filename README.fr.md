@@ -9,7 +9,7 @@ Enregistrez la scène et le brouillon dans un projet `.egvehicle`.
 
 ## Télécharger et lancer
 
-1. Téléchargez puis lancez [l’installateur pour Windows x64](https://github.com/Egorika-Studio/Egorika-Vehicle-Studio/releases/latest/download/EgorikaVehicleStudio-Setup-Windows-x64.exe). Choisissez le dossier d’installation et, si vous le souhaitez, créez un raccourci sur le bureau.
+1. Téléchargez puis lancez [l’installateur pour Windows x64](https://github.com/Egorika-Studio/Egorika-Vehicle-Studio/releases/latest/download/EgorikaVehicleStudio-OnlineSetup-Windows-x64.exe). Choisissez le dossier d’installation et, si vous le souhaitez, créez un raccourci sur le bureau.
 2. Ouvrez Egorika Vehicle Studio depuis le menu Démarrer ou le dossier d’installation. Au premier démarrage, Internet est nécessaire pour télécharger CodeWalker 30 dev46 depuis le site de son auteur et vérifier son SHA-256.
 3. Windows nécessite [.NET Framework 4.8 ou 4.8.1](https://learn.microsoft.com/dotnet/framework/install/versions-and-dependencies). Pour importer les archives du jeu, indiquez le chemin de GTA V Legacy dans **Paramètres → Chemin de GTA V…**. Les fichiers YFT locaux s’ouvrent sans installer le jeu.
 
