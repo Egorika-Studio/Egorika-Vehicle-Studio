@@ -1,6 +1,6 @@
 # Egorika Vehicle Studio
 
-[Русский](README.md) · [English](README.en.md) · [Español](README.es.md) · [Français](README.fr.md) · **Português (Brasil)**
+[Русский](README.ru.md) · [English](README.md) · [Español](README.es.md) · [Français](README.fr.md) · **Português (Brasil)**
 
 Visualizador de veículos e editor de modificações para GTA V Legacy no
 Windows x64. Abra arquivos YFT, inspecione níveis de detalhe, ossos, materiais
