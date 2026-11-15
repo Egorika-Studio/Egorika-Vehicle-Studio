@@ -17,8 +17,6 @@ To uninstall, use **Uninstall Egorika Vehicle Studio** in the Start menu or run 
 
 The installation folder contains the stock GTA V vehicle previews in `thumbnails`, generated mod previews in `thumbnails\mods`, and local preferences in `settings`. A mod preview is generated the first time the model is opened.
 
-A [portable ZIP](https://github.com/Egorika-Studio/Egorika-Vehicle-Studio/releases/latest/download/EgorikaVehicleStudio-Windows-x64.zip) is also available. Extract it to a writable folder and run `EgorikaVehicleStudio.exe`.
-
 **Settings → Language** offers Russian, English, Spanish, French, and Brazilian Portuguese. Restart the app to apply the new language.
 
 ## Updates
@@ -48,14 +46,14 @@ argument. The script reads pre-rendered stock thumbnails from `bin\thumbnails`
 by default. Use `-ThumbnailDirectory` to select another folder. To render the
 library from a local GTA V Legacy installation, run the built viewer with
 `--bake-thumbnails "C:\path\to\GTA V" "C:\path\to\thumbnails" "*"`.
-Attach the resulting files from `dist\v<version>` to a GitHub Release tagged
-`v<version>`. The ZIP is for first-time installation. The standalone EXE is for
-in-app updates.
+Publish the ZIP and standalone EXE on a public prerelease tagged
+`payload-v<version>`. Upload only the online installer to the stable release
+tagged `v<version>`. Publish the prerelease first.
 
 Use `package-release.ps1` with `-InnoSetupCompiler` (Inno Setup 6.5 or later) to build the online installer along with the ZIP and update EXE.
 The online installer, `EgorikaVehicleStudio-OnlineSetup-Windows-x64.exe`, downloads the public portable ZIP for its release tag without signing in. It verifies the ZIP against the SHA-256 embedded at build time and installs the application into the folder selected in Setup.
 The online setup window uses WPF and requires .NET Framework 4.8 or later, as does Vehicle Studio. Its English and Russian interface uses the Egorika Setup wordmark and Source Sans 3.
-Upload the online installer and the exact ZIP used to build it to the same release. Keep that ZIP available for anyone who saves a copy of the installer.
+Keep the exact ZIP used to build the installer available on its prerelease.
 
 ## Licenses
 

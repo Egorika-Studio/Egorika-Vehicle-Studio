@@ -15,8 +15,6 @@ Enregistrez la scène et le brouillon dans un projet `.egvehicle`.
 
 Pour désinstaller, utilisez le menu Démarrer ou lancez `unins000.exe` depuis le dossier d’installation. Vos projets et vos préférences sont conservés.
 
-Un [ZIP portable](https://github.com/Egorika-Studio/Egorika-Vehicle-Studio/releases/latest/download/EgorikaVehicleStudio-Windows-x64.zip) est aussi disponible. Extrayez-le dans un dossier où vous avez le droit d’écrire et lancez `EgorikaVehicleStudio.exe`.
-
 Dans **Paramètres → Langue**, choisissez le russe, l’anglais, l’espagnol, le français ou le portugais du Brésil. Redémarrez l’application pour appliquer le changement.
 
 ## Mises à jour

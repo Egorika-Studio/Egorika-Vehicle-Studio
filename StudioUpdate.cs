@@ -31,19 +31,37 @@ namespace SentinelViewer
         internal static Release FindRelease()
         {
             using (var client = Client())
-                return ParseRelease(client.DownloadString(new Uri("https://api.github.com/repos/" + Repository + "/releases/latest")));
+            {
+                string releases = "https://api.github.com/repos/" + Repository + "/releases";
+                var latest = ReadRelease(client.DownloadString(new Uri(releases + "/latest")));
+                Version version = ReleaseVersion(latest);
+                if (version == null || version <= Current) return null;
+                string payloadTag = "payload-" + latest.tag_name;
+                var payload = ReadRelease(client.DownloadString(new Uri(releases + "/tags/" + payloadTag)));
+                if (payload == null || payload.tag_name != payloadTag)
+                    throw new InvalidDataException("The update package does not match the public release.");
+                return ReadUpdateAsset(payload, version);
+            }
         }
 
-        internal static Release ParseRelease(string json)
+        static ReleaseMetadata ReadRelease(string json)
         {
-            var release = new JavaScriptSerializer().Deserialize<ReleaseMetadata>(json);
+            return new JavaScriptSerializer().Deserialize<ReleaseMetadata>(json);
+        }
+
+        static Version ReleaseVersion(ReleaseMetadata release)
+        {
             string tag = release == null ? null : release.tag_name;
             Version version;
             if (String.IsNullOrEmpty(tag) || !Regex.IsMatch(tag, @"\Av\d+\.\d+\.\d+\z") ||
-                !Version.TryParse(tag.Substring(1) + ".0", out version) || version <= Current) return null;
+                !Version.TryParse(tag.Substring(1) + ".0", out version)) return null;
+            return version;
+        }
 
+        static Release ReadUpdateAsset(ReleaseMetadata release, Version version)
+        {
             var asset = (release.assets ?? new AssetMetadata[0]).SingleOrDefault(item => item.name == AssetName);
-            string url = "https://github.com/" + Repository + "/releases/download/" + tag + "/" + AssetName;
+            string url = "https://github.com/" + Repository + "/releases/download/" + release.tag_name + "/" + AssetName;
             if (asset == null || asset.browser_download_url != url || asset.size <= 0 || asset.size > 16 * 1024 * 1024 ||
                 asset.digest == null || !Regex.IsMatch(asset.digest, @"\Asha256:[a-fA-F0-9]{64}\z"))
                 throw new InvalidDataException("The GitHub release has no verifiable Windows update.");

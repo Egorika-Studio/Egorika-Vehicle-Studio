@@ -15,8 +15,6 @@ Salve a cena de trabalho e o rascunho em um projeto `.egvehicle`.
 
 Para desinstalar, use o menu Iniciar ou execute `unins000.exe` na pasta de instalação. Seus projetos e preferências são preservados.
 
-Também há um [ZIP portátil](https://github.com/Egorika-Studio/Egorika-Vehicle-Studio/releases/latest/download/EgorikaVehicleStudio-Windows-x64.zip). Extraia-o em uma pasta com permissão de gravação e execute `EgorikaVehicleStudio.exe`.
-
 Em **Configurações → Idioma**, escolha russo, inglês, espanhol, francês ou português do Brasil. Reinicie o aplicativo para aplicar o idioma.
 
 ## Atualizações

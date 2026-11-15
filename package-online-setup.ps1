@@ -9,7 +9,7 @@ if ($Version -notmatch '^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$') {
 }
 $package = Get-Item -LiteralPath $PackageZip
 $hash = (Get-FileHash -LiteralPath $package.FullName -Algorithm SHA256).Hash
-$url = "https://github.com/Egorika-Studio/Egorika-Vehicle-Studio/releases/download/v$Version/EgorikaVehicleStudio-Windows-x64.zip"
+$url = "https://github.com/Egorika-Studio/Egorika-Vehicle-Studio/releases/download/payload-v$Version/EgorikaVehicleStudio-Windows-x64.zip"
 
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 $archive = [IO.Compression.ZipFile]::OpenRead($package.FullName)
