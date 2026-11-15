@@ -23,12 +23,19 @@ A [portable ZIP](https://github.com/Egorika-Studio/Egorika-Vehicle-Studio/releas
 
 ## Updates
 
-Use **Help → Check for updates…** to download new versions from public GitHub
-Releases. After you confirm, the app checks the downloaded EXE's version and
-SHA-256 hash against GitHub's release metadata. Save your projects and close
-the editor. The app will replace its EXE and restart.
+Vehicle Studio checks public GitHub Releases in the background on startup.
+It downloads a newer EXE, verifies its version and SHA-256 against release
+metadata, and applies it at the next launch. You can also check manually in
+**Help → Check for updates…**.
 
 The previous EXE is kept as `previous.exe` in a `.egorika-update-*` directory, inside `runtime` for installed copies and next to the EXE for portable copies.
+
+## Session recovery
+
+The currently open vehicle, tuning draft and workspace are saved under
+`settings\session.egvehicle` every 30 seconds while the editor is idle and again
+when it closes. At the next launch, Vehicle Studio restores the last completed
+snapshot. The session snapshot is separate from manually saved projects.
 
 ## Build from source
 
@@ -45,7 +52,7 @@ Attach the resulting files from `dist\v<version>` to a GitHub Release tagged
 `v<version>`. The ZIP is for first-time installation. The standalone EXE is for
 in-app updates.
 
-Use `package-release.ps1` with `-InnoSetupCompiler` (Inno Setup 6.5 or later) to build both installers along with the ZIP and update EXE.
+Use `package-release.ps1` with `-InnoSetupCompiler` (Inno Setup 6.5 or later) to build the online installer along with the ZIP and update EXE.
 The online installer, `EgorikaVehicleStudio-OnlineSetup-Windows-x64.exe`, downloads the public portable ZIP for its release tag without signing in. It verifies the ZIP against the SHA-256 embedded at build time and installs the application into the folder selected in Setup.
 The online setup window uses WPF and requires .NET Framework 4.8 or later, as does Vehicle Studio. Its English and Russian interface uses the Egorika Setup wordmark and Source Sans 3.
 Upload the online installer and the exact ZIP used to build it to the same release. Keep that ZIP available for anyone who saves a copy of the installer.

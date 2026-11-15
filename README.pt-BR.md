@@ -21,10 +21,7 @@ Em **Configurações → Idioma**, escolha russo, inglês, espanhol, francês ou
 
 ## Atualizações
 
-Use **Ajuda → Verificar atualizações…** para baixar novas versões dos releases
-públicos do GitHub. Após a confirmação, o aplicativo verifica a versão e o
-SHA-256 do EXE baixado com base nos metadados do GitHub. Salve os projetos e
-feche o editor. O aplicativo substituirá o EXE e abrirá novamente.
+Ao iniciar, o Vehicle Studio verifica as versões públicas no GitHub em segundo plano. Ele baixa a nova versão, verifica o SHA-256 e aplica a atualização na próxima abertura. A verificação manual está disponível no menu Ajuda.
 
 O EXE anterior é salvo como `previous.exe` em uma pasta `.egorika-update-*`, dentro de `runtime` na versão instalada e ao lado do EXE na versão portátil.
 

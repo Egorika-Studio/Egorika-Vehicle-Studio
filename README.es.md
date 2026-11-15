@@ -21,11 +21,7 @@ En **Ajustes → Idioma** puedes elegir ruso, inglés, español, francés o port
 
 ## Actualizaciones
 
-Usa **Ayuda → Buscar actualizaciones…** para descargar nuevas versiones desde
-los lanzamientos públicos de GitHub. Una vez confirmada la descarga, la
-aplicación compara la versión y el SHA-256 del EXE con los datos de GitHub.
-Guarda los proyectos y cierra el editor. La aplicación sustituirá el EXE y se
-iniciará de nuevo.
+Vehicle Studio comprueba los lanzamientos públicos de GitHub en segundo plano al iniciarse. Descarga la nueva versión, verifica su SHA-256 y la aplica en el siguiente inicio. También puedes buscar actualizaciones en el menú Ayuda.
 
 El EXE anterior se guarda como `previous.exe` en una carpeta `.egorika-update-*`, dentro de `runtime` en instalaciones y junto al EXE en la edición portable.
 

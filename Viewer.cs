@@ -52,6 +52,9 @@ namespace SentinelViewer
         };
         readonly Dictionary<int, int> boneParents = new Dictionary<int, int>();
         readonly TextBlock status = new TextBlock { Margin = new Thickness(10), TextWrapping = TextWrapping.Wrap };
+        readonly TextBlock updateNotice = new TextBlock { Margin = new Thickness(10, 4, 10, 0),
+            Text = Ui.Text("Обновление готово к следующему запуску.", "Update ready for the next launch."),
+            Visibility = Visibility.Collapsed };
         readonly Viewport3D viewport = new Viewport3D { ClipToBounds = true, IsHitTestVisible = false };
         readonly PerspectiveCamera camera = new PerspectiveCamera { FieldOfView = 42, NearPlaneDistance = 0.12, FarPlaneDistance = 260 };
         readonly Model3DGroup scene = new Model3DGroup();
@@ -99,6 +102,14 @@ namespace SentinelViewer
 
         Viewer()
         {
+            Closing += CloseWithSession;
+            Closing += (s, e) =>
+            {
+                if (e.Cancel) return;
+                StopAxisTransition();
+                foreach (var window in floatingPanes.ToArray()) window.Close();
+                CloseTuningEditor();
+            };
             StudioTheme.Apply(this);
             SourceInitialized += (s, e) =>
             {
@@ -151,6 +162,8 @@ namespace SentinelViewer
             };
             DockPanel.SetDock(status, Dock.Bottom);
             layout.Children.Add(status);
+            DockPanel.SetDock(updateNotice, Dock.Bottom);
+            layout.Children.Add(updateNotice);
 
             var playback = new CheckBox { Content = Ui.Text("Ход времени", "Play time"), Margin = new Thickness(0, 0, 12, 0), VerticalAlignment = VerticalAlignment.Center };
             aoEnabled.Checked += (s, e) => RefreshScene();
@@ -1029,13 +1042,31 @@ namespace SentinelViewer
             File.WriteAllText(GameSettings, folder);
         }
 
-        void Start(string[] args)
+        async void Start(string[] args)
         {
-            if (args.Length == 0) { ShowProjectLauncher(); return; }
-            OpenInitialModel(args);
+            StartSessionTracking();
+            if (String.Equals(Path.GetFileName(typeof(Viewer).Assembly.Location), "EgorikaVehicleStudio.exe",
+                StringComparison.OrdinalIgnoreCase))
+                CheckForStudioUpdateOnStartup();
+            if (args.Length != 0)
+            {
+                await OpenInitialModel(args);
+                if (vehicle != null) await SaveSessionSnapshot();
+                return;
+            }
+            if (sessionLock != null && File.Exists(SessionPath))
+            {
+                if (await OpenProjectAsync(SessionPath, false, true))
+                {
+                    status.Text = Ui.Text("Предыдущая сессия восстановлена.", "Previous session restored.");
+                    return;
+                }
+                MessageBox.Show(this, status.Text, AppName, MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+            ShowProjectLauncher();
         }
 
-        async void OpenInitialModel(string[] args)
+        async Task OpenInitialModel(string[] args)
         {
             if (loading) return;
             loading = true;
@@ -1399,6 +1430,7 @@ namespace SentinelViewer
         {
             if (args.Length == 4 && args[0] == "--apply-studio-update")
                 return StudioUpdate.Apply(args[1], args[2], args[3]);
+            if (args.Length == 0 && StudioUpdate.TryApplyOnRestart()) return 0;
             try
             {
                 StudioDependencies.RegisterResolver();
@@ -1430,12 +1462,10 @@ namespace SentinelViewer
                 try { return Check(args); }
                 catch (Exception ex) { File.WriteAllText(args[1], ex.ToString()); return 1; }
             }
-            var app = new Application();
+            var app = new Application { ShutdownMode = ShutdownMode.OnMainWindowClose };
             var viewer = new Viewer();
             viewer.Loaded += (s, e) => viewer.Start(args);
-            int result = app.Run(viewer);
-            if (result == 0) StudioUpdate.StartAfterShutdown();
-            return result;
+            return app.Run(viewer);
         }
 
         static int Check(string[] args)

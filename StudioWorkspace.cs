@@ -350,7 +350,6 @@ namespace SentinelViewer
             tuningTree.SelectedItemChanged += SelectTuningTreeItem;
             tree.GotKeyboardFocus += (s, e) => { if (isolationTreeIsTuning) { isolationTreeIsTuning = false; RefreshScene(); } };
             tuningTree.GotKeyboardFocus += (s, e) => isolationTreeIsTuning = true;
-            Closing += (s, e) => { StopAxisTransition(); foreach (var window in floatingPanes.ToArray()) window.Close(); };
             return workspace;
         }
 

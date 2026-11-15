@@ -32,9 +32,6 @@ $zip = Join-Path $stage 'EgorikaVehicleStudio-Windows-x64.zip'
 Compress-Archive -LiteralPath (Get-ChildItem -LiteralPath $portable).FullName -DestinationPath $zip -Force
 Get-Item -LiteralPath (Join-Path $stage 'EgorikaVehicleStudio.exe'), $zip
 if ($InnoSetupCompiler) {
-    & $InnoSetupCompiler "/O$stage" "/DAppVersion=$version" "/DBuildDir=$portable" (Join-Path $PSScriptRoot 'packaging\vehicle-studio.iss')
-    if ($LASTEXITCODE -ne 0) { throw 'Installer compilation failed.' }
-    Get-Item -LiteralPath (Join-Path $stage 'EgorikaVehicleStudio-Setup-Windows-x64.exe')
     & (Join-Path $PSScriptRoot 'package-online-setup.ps1') -PackageZip $zip -Version $version `
         -InnoSetupCompiler $InnoSetupCompiler
 }

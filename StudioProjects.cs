@@ -20,6 +20,61 @@ namespace SentinelViewer
         const string ProjectFilter = "Egorika Vehicle Project (*.egvehicle)|*.egvehicle";
         static readonly string RecentPath = StudioPaths.Setting("recent-projects.txt");
         string projectPath;
+        static readonly string SessionPath = Path.Combine(StudioPaths.Root, "settings", "session.egvehicle");
+        FileStream sessionLock;
+        bool closingSession, sessionSavedForClose;
+
+        void StartSessionTracking()
+        {
+            try
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(SessionPath));
+                sessionLock = new FileStream(SessionPath + ".lock", FileMode.OpenOrCreate,
+                    FileAccess.ReadWrite, FileShare.None);
+            }
+            catch (IOException) { return; }
+            catch (UnauthorizedAccessException) { return; }
+
+            var timer = new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromSeconds(30) };
+            timer.Tick += async (s, e) =>
+            {
+                if (!closingSession && !loading && vehicle != null) await SaveSessionSnapshot();
+            };
+            Closed += (s, e) => { timer.Stop(); sessionLock.Dispose(); };
+            timer.Start();
+        }
+
+        Task<bool> SaveSessionSnapshot()
+        {
+            return sessionLock == null ? Task.FromResult(false) : SaveProjectAsync(false, SessionPath, true);
+        }
+
+        void ClearSessionSnapshot()
+        {
+            if (sessionLock == null) return;
+            try { File.Delete(SessionPath); }
+            catch (IOException) { }
+            catch (UnauthorizedAccessException) { }
+        }
+
+        async void CloseWithSession(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (sessionSavedForClose || sessionLock == null || (!loading && vehicle == null)) return;
+            e.Cancel = true;
+            if (closingSession) return;
+            closingSession = true;
+            await Task.Yield();
+            while (loading) await Task.Delay(100);
+            if (vehicle == null || await SaveSessionSnapshot() ||
+                MessageBox.Show(this, Ui.Text("Не удалось сохранить сессию. Всё равно закрыть программу?",
+                    "The session could not be saved. Close the application anyway?"), AppName,
+                    MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+            {
+                sessionSavedForClose = true;
+                Close();
+            }
+            else closingSession = false;
+        }
 
         async Task<bool> EnsureArchives()
         {
@@ -121,6 +176,7 @@ namespace SentinelViewer
             if (vehicle != null && MessageBox.Show(this, Ui.Text("Создать новый проект и закрыть текущий?",
                 "Create a new project and close the current one?"), AppName, MessageBoxButton.YesNo) != MessageBoxResult.Yes) return;
             CloseTuningEditor();
+            ClearSessionSnapshot();
             projectPath = null;
             currentNormal = null; currentHigh = null; currentDictionaries = null;
             autoCarcols = null; sourceArchives = null; packageFolder = null;
@@ -178,27 +234,27 @@ namespace SentinelViewer
 
         async void SaveProject(bool saveAs) { await SaveProjectAsync(saveAs, null); }
 
-        async Task SaveProjectAsync(bool saveAs, string explicitPath)
+        async Task<bool> SaveProjectAsync(bool saveAs, string explicitPath, bool recovery = false)
         {
             if (loading || vehicle == null)
             {
                 status.Text = Ui.Text("Для сохранения сначала откройте модель.", "Open a vehicle before saving a project.");
-                return;
+                return false;
             }
             string destination = explicitPath ?? projectPath;
             if (destination == null || saveAs)
             {
                 var dialog = new SaveFileDialog { Filter = ProjectFilter, DefaultExt = ".egvehicle",
                     FileName = Path.GetFileNameWithoutExtension(currentNormal) + ".egvehicle" };
-                if (dialog.ShowDialog(this) != true) return;
+                if (dialog.ShowDialog(this) != true) return false;
                 destination = dialog.FileName;
             }
             string temporary = destination + "." + Guid.NewGuid().ToString("N") + ".tmp";
             try
             {
-                if (!ReadyEditor()) return;
+                if (!ReadyEditor()) return false;
                 var draft = tuningEditor.CaptureProject();
-                if (draft == null) return;
+                if (draft == null) return false;
                 string normal = currentNormal, high = currentHigh;
                 string[] ytd = currentDictionaries ?? new string[0];
                 string originalPackage = packageFolder;
@@ -232,6 +288,7 @@ namespace SentinelViewer
                         Attr("row", workspace.RowDefinitions[0].ActualHeight /
                             Math.Max(1, workspace.RowDefinitions[0].ActualHeight + workspace.RowDefinitions[2].ActualHeight))),
                     draft);
+                if (recovery) root.Add(Attr("sessionProject", projectPath));
                 string[] partPaths = tuningEditor.PreviewParts.Select(part => part.FilePath).ToArray();
                 string[] support = LocalProjectParts().ToArray();
                 string manualLivery = manualLiveryPath;
@@ -239,6 +296,7 @@ namespace SentinelViewer
                 loading = true;
                 await Task.Run(() =>
                 {
+                    Directory.CreateDirectory(Path.GetDirectoryName(destination));
                     using (var zip = ZipFile.Open(temporary, ZipArchiveMode.Create))
                     {
                         int number = 0;
@@ -259,12 +317,21 @@ namespace SentinelViewer
                     if (File.Exists(destination)) File.Replace(temporary, destination, null);
                     else File.Move(temporary, destination);
                 });
-                projectPath = destination;
-                if (explicitPath == null) RememberProject(destination);
-                Title = AppName + " · " + Path.GetFileNameWithoutExtension(destination);
-                status.Text = Ui.Text("Проект сохранён: ", "Project saved: ") + destination;
+                if (!recovery)
+                {
+                    projectPath = destination;
+                    if (explicitPath == null) RememberProject(destination);
+                    Title = AppName + " · " + Path.GetFileNameWithoutExtension(destination);
+                    status.Text = Ui.Text("Проект сохранён: ", "Project saved: ") + destination;
+                }
+                return true;
             }
-            catch (Exception ex) { status.Text = ex.Message; }
+            catch (Exception ex)
+            {
+                if (recovery) System.Diagnostics.Trace.TraceWarning("Session snapshot: " + ex.Message);
+                else status.Text = ex.Message;
+                return false;
+            }
             finally
             {
                 loading = false;
@@ -339,9 +406,9 @@ namespace SentinelViewer
 
         async void OpenProject(string path) { await OpenProjectAsync(path, true); }
 
-        async Task OpenProjectAsync(string path, bool remember)
+        async Task<bool> OpenProjectAsync(string path, bool remember, bool recovery = false)
         {
-            if (loading) return;
+            if (loading) return false;
             loading = true;
             status.Text = Ui.Text("Открываю проект…", "Opening project…");
             var created = new List<string>();
@@ -352,7 +419,10 @@ namespace SentinelViewer
                 var root = data.Root;
                 if (data.Model == null) throw new InvalidDataException(Ui.Text("В проекте нет модели.", "The project has no vehicle."));
                 if (ReadAttr(root, "game") == "true" && gameTextures == null)
-                    await EnsureArchives();
+                {
+                    if (recovery) await ConnectSavedArchives();
+                    else await EnsureArchives();
+                }
                 string rpf = ReadAttr(root, "rpf");
                 var source = !String.IsNullOrWhiteSpace(rpf) && File.Exists(rpf)
                     ? await Task.Run(() => GameTextures.OpenRpf(rpf)) : gameTextures;
@@ -368,17 +438,24 @@ namespace SentinelViewer
                     .ToDictionary(group => group.Key, group => group.First(), StringComparer.OrdinalIgnoreCase);
                 foreach (var field in paintFields.Values) field.Clear();
                 Load(data.Model, data.High, textures, model, null, data.Variations);
+                if (vehicle != model) throw new InvalidDataException("The vehicle could not be restored.");
                 EnsureTuningEditor(null);
                 tuningEditor.RestoreProject(root.Element("editor"), data.Parts, directory);
                 PopulateProjectLiveries();
                 loading = false;
                 RestoreView(root);
                 if (File.Exists(data.ManualLivery)) LoadManualLivery(data.ManualLivery);
-                projectPath = path;
-                Title = AppName + " · " + Path.GetFileNameWithoutExtension(path);
+                string original = recovery ? ReadAttr(root, "sessionProject") : path;
+                projectPath = String.IsNullOrWhiteSpace(original) ? null : original;
+                Title = AppName + " · " + Path.GetFileNameWithoutExtension(projectPath ?? data.Model);
                 if (remember) RememberProject(path);
+                return true;
             }
-            catch (Exception ex) { status.Text = Ui.Text("Ошибка проекта: ", "Project error: ") + ex.Message; }
+            catch (Exception ex)
+            {
+                status.Text = Ui.Text("Ошибка проекта: ", "Project error: ") + ex.Message;
+                return false;
+            }
             finally
             {
                 previewFolders.AddRange(created.AsEnumerable().Reverse());

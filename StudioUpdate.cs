@@ -17,8 +17,8 @@ namespace SentinelViewer
         internal const string Repository = "Egorika-Studio/Egorika-Vehicle-Studio";
         const string AssetName = "EgorikaVehicleStudio.exe";
         internal static readonly Version Current = typeof(StudioUpdate).Assembly.GetName().Version;
-        static string stagedFolder;
-        static string stagedHash;
+        const string ReadyMarker = "ready.sha256";
+        internal static bool Pending { get; private set; }
 
         internal sealed class Release
         {
@@ -97,13 +97,14 @@ namespace SentinelViewer
                 if (new FileInfo(candidate).Length != release.Size || !HashMatches(candidate, release.Hash) ||
                     assembly.Name != "EgorikaVehicleStudio" || assembly.Version != release.Version)
                     throw new InvalidDataException("The update did not match the GitHub release.");
-                stagedHash = release.Hash;
-                stagedFolder = folder;
+                string marker = Path.Combine(folder, ReadyMarker);
+                File.WriteAllText(marker + ".tmp", release.Hash);
+                File.Move(marker + ".tmp", marker);
+                Pending = true;
             }
             catch
             {
-                if (File.Exists(candidate)) File.Delete(candidate);
-                Directory.Delete(folder);
+                Directory.Delete(folder, true);
                 throw;
             }
         }
@@ -120,25 +121,44 @@ namespace SentinelViewer
             }
         }
 
-        internal static bool Pending { get { return stagedFolder != null; } }
-
-        internal static void StartAfterShutdown()
+        internal static bool TryApplyOnRestart()
         {
-            if (!Pending) return;
             string exe = ExecutablePath();
-            string helper = Path.Combine(stagedFolder, "apply-update.exe");
+            string runtime = StudioDependencies.RuntimeDirectory(Path.GetDirectoryName(exe));
+            if (!String.Equals(Path.GetFileName(exe), AssetName, StringComparison.OrdinalIgnoreCase)) return false;
             try
             {
-                File.Copy(exe, helper);
-                using (var process = Process.GetCurrentProcess())
-                    Process.Start(new ProcessStartInfo(helper,
-                        "--apply-studio-update " + process.Id + " \"" + exe + "\" " + stagedHash)
-                    { UseShellExecute = false, CreateNoWindow = true });
+                foreach (string folder in Directory.EnumerateDirectories(runtime, ".egorika-update-*"))
+                {
+                    string marker = Path.Combine(folder, ReadyMarker);
+                    if (!File.Exists(marker)) continue;
+                    string hash = File.ReadAllText(marker);
+                    string candidate = Path.Combine(folder, AssetName);
+                    if (!Regex.IsMatch(hash, @"\A[a-fA-F0-9]{64}\z") || !File.Exists(candidate) ||
+                        AssemblyName.GetAssemblyName(candidate).Version <= Current) continue;
+                    string helper = Path.Combine(folder, "apply-update.exe");
+                    File.Move(marker, marker + ".applying");
+                    try
+                    {
+                        File.Copy(exe, helper, true);
+                        using (var process = Process.GetCurrentProcess())
+                            Process.Start(new ProcessStartInfo(helper,
+                                "--apply-studio-update " + process.Id + " \"" + exe + "\" " + hash)
+                            { UseShellExecute = false, CreateNoWindow = true });
+                        return true;
+                    }
+                    catch
+                    {
+                        File.Move(marker + ".applying", marker);
+                        throw;
+                    }
+                }
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Egorika Vehicle Studio");
+                Trace.TraceWarning("Vehicle Studio update: " + ex.Message);
             }
+            return false;
         }
 
         internal static int Apply(string pid, string target, string hash)
@@ -187,31 +207,45 @@ namespace SentinelViewer
     sealed partial class Viewer
     {
         bool checkingStudioUpdate;
-        async void CheckForStudioUpdate()
+        async void CheckForStudioUpdate() { await CheckStudioUpdate(false); }
+        async void CheckForStudioUpdateOnStartup() { await CheckStudioUpdate(true); }
+
+        async Task CheckStudioUpdate(bool automatic)
         {
-            if (checkingStudioUpdate || StudioUpdate.Pending) return;
+            if (checkingStudioUpdate) return;
+            if (StudioUpdate.Pending)
+            {
+                if (!automatic) ShowUpdateReady();
+                return;
+            }
             checkingStudioUpdate = true;
             try
             {
                 var release = await Task.Run(() => StudioUpdate.FindRelease());
                 if (release == null)
                 {
-                    MessageBox.Show(this, Ui.Text("Новых версий нет.", "No new version is available.") +
+                    if (!automatic) MessageBox.Show(this, Ui.Text("Новых версий нет.", "No new version is available.") +
                         " (" + StudioUpdate.Current.ToString(3) + ")", AppName);
                     return;
                 }
-                if (MessageBox.Show(this, Ui.Text("Скачать версию ", "Download version ") + release.Version.ToString(3) +
-                    Ui.Text(" и установить после закрытия программы?", " and install it when the editor closes?"),
+                if (!automatic && MessageBox.Show(this, Ui.Text("Скачать версию ", "Download version ") + release.Version.ToString(3) +
+                    Ui.Text(" и установить при следующем запуске?", " and install it at the next launch?"),
                     AppName, MessageBoxButton.YesNo) != MessageBoxResult.Yes) return;
                 await Task.Run(() => StudioUpdate.Stage(release));
-                MessageBox.Show(this, Ui.Text("Обновление готово. Сохрани проект и закрой программу. Новая версия запустится автоматически.",
-                    "Update ready. Save your project and close the editor. The new version will start automatically."), AppName);
+                if (!automatic) ShowUpdateReady();
+                else updateNotice.Visibility = Visibility.Visible;
             }
             catch (Exception ex)
             {
-                MessageBox.Show(this, Ui.Text("Не удалось обновиться. ", "Could not update. ") + ex.Message, AppName);
+                if (!automatic) MessageBox.Show(this, Ui.Text("Не удалось обновиться. ", "Could not update. ") + ex.Message, AppName);
             }
             finally { checkingStudioUpdate = false; }
+        }
+
+        void ShowUpdateReady()
+        {
+            MessageBox.Show(this, Ui.Text("Обновление готово. Оно установится при следующем запуске.",
+                "The update is ready and will be installed at the next launch."), AppName);
         }
     }
 }

@@ -1,14 +1,8 @@
 ﻿#ifndef AppVersion
   #error Pass /DAppVersion from package-release.ps1
 #endif
-#ifdef OnlinePackageHash
-  #ifndef OnlinePackageUrl
-    #error Pass /DOnlinePackageUrl for an online build
-  #endif
-#else
-  #ifndef BuildDir
-    #error Pass /DBuildDir from package-release.ps1
-  #endif
+#ifndef OnlinePackageHash
+  #error Build with package-online-setup.ps1
 #endif
 
 [Setup]
@@ -23,16 +17,10 @@ PrivilegesRequired=lowest
 ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
 MinVersion=10.0
-#ifdef OnlinePackageHash
 OutputBaseFilename=VehicleStudioInstallEngine
 ArchiveExtraction=full
 #define FileSource "{tmp}\vehicle-studio-package"
 #define FileFlags "external ignoreversion"
-#else
-OutputBaseFilename=EgorikaVehicleStudio-Setup-Windows-x64
-#define FileSource BuildDir
-#define FileFlags "ignoreversion"
-#endif
 SetupIconFile=..\Egorika.ico
 UninstallDisplayIcon={app}\EgorikaVehicleStudio.exe
 WizardStyle=modern
@@ -58,17 +46,10 @@ brazilianportuguese.NeedFramework=É necessário o .NET Framework 4.8 ou posteri
 Name: "{app}\runtime"; Attribs: hidden
 
 [Files]
-#ifdef OnlinePackageHash
 Source: "{#FileSource}\EgorikaVehicleStudio.exe"; DestDir: "{app}"; Flags: {#FileFlags}; ExternalSize: {#OnlineExeSize}
 Source: "{#FileSource}\SharpDX.dll"; DestDir: "{app}\runtime"; Flags: {#FileFlags}; ExternalSize: {#OnlineSharpDXSize}
 Source: "{#FileSource}\SharpDX.Mathematics.dll"; DestDir: "{app}\runtime"; Flags: {#FileFlags}; ExternalSize: {#OnlineMathSize}
 Source: "{#FileSource}\thumbnails\*.png"; DestDir: "{app}\thumbnails"; Flags: {#FileFlags}; ExternalSize: {#OnlineThumbnailSize}
-#else
-Source: "{#FileSource}\EgorikaVehicleStudio.exe"; DestDir: "{app}"; Flags: {#FileFlags}
-Source: "{#FileSource}\SharpDX.dll"; DestDir: "{app}\runtime"; Flags: {#FileFlags}
-Source: "{#FileSource}\SharpDX.Mathematics.dll"; DestDir: "{app}\runtime"; Flags: {#FileFlags}
-Source: "{#FileSource}\thumbnails\*.png"; DestDir: "{app}\thumbnails"; Flags: {#FileFlags}
-#endif
 Source: "..\LICENSE"; DestDir: "{app}\runtime\licenses"; DestName: "Egorika-MIT.txt"; Flags: ignoreversion
 Source: "..\SharpDX-LICENSE.txt"; DestDir: "{app}\runtime\licenses"; Flags: ignoreversion
 
@@ -89,7 +70,6 @@ Type: filesandordirs; Name: "{app}\runtime\.egorika-update-*"
 Type: dirifempty; Name: "{app}\runtime"
 
 [Code]
-#ifdef OnlinePackageHash
 var
   DownloadPage: TDownloadWizardPage;
 
@@ -124,7 +104,6 @@ begin
     end;
   end;
 end;
-#endif
 
 function SetFileAttributes(FileName: string; Attributes: Cardinal): Boolean;
   external 'SetFileAttributesW@kernel32.dll stdcall';
