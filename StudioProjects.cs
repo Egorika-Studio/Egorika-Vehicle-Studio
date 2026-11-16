@@ -602,6 +602,15 @@ namespace SentinelViewer
                     before.PreviewTuning(selected, before.tuningEditor.PreviewParts, before.tuningEditor.ImportedPath);
                 }
                 if (!before.tuningEditor.ImportPart(normal)) throw new InvalidOperationException("Project import fixture failed.");
+                var kit = before.tuningEditor.ExportVehicleDocument(606, "606_sentinel5_modkit").Descendants("Kits").Single().Element("Item");
+                var existingStats = kit.Element("statMods");
+                var editedRows = existingStats.Elements("Item").Select(item =>
+                    new TuningEditor.AdvancedRow(item, new[] { "modifier" })).ToArray();
+                editedRows[0]["modifier"] = "125";
+                var advancedStats = TuningEditor.BuildAdvancedSection(existingStats, editedRows);
+                var advancedSlots = new XElement(kit.Element("slotNames"));
+                advancedSlots.Elements("Item").First().SetElementValue("name", "TOP_TEST");
+                before.tuningEditor.SaveAdvancedSections(advancedStats, advancedSlots);
                 before.panes[0].Position = 2; before.panes[2].Position = 0;
                 PlacePane(before.panes[0]); PlacePane(before.panes[2]);
                 CompleteProjectCheck(() => before.SaveProjectAsync(false, file));
@@ -612,6 +621,10 @@ namespace SentinelViewer
                     after.paintFields[1].Text != "#287B91" || after.projection.IsChecked != true || after.panes[0].Position != 2 ||
                     !File.Exists(after.tuningEditor.PreviewParts.Last().FilePath))
                     throw new InvalidOperationException("Project did not restore its model, settings and assets: " + after.status.Text);
+                var restoredKit = after.tuningEditor.ExportVehicleDocument(606, "606_sentinel5_modkit").Descendants("Kits").Single().Element("Item");
+                if (!XNode.DeepEquals(advancedStats, restoredKit.Element("statMods")) ||
+                    !XNode.DeepEquals(advancedSlots, restoredKit.Element("slotNames")))
+                    throw new InvalidOperationException("Project did not restore advanced carcols edits.");
                 if (archives != null && (!after.tuningChoices.ContainsKey("VMT_BUMPER_F") ||
                     after.tuningChoices["VMT_BUMPER_F"].Part.Model != "sent5_splt_0"))
                     throw new InvalidOperationException("Project did not restore active tuning.");

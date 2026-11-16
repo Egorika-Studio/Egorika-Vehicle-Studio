@@ -74,6 +74,16 @@ Dashboard¦Tablero¦Tableau de bord¦Painel
 Dash¦Tabl.¦T. bord¦Painel
 Apply colors¦Aplicar colores¦Appliquer les couleurs¦Aplicar cores
 Apply¦Aplicar¦Appliquer¦Aplicar
+Cancel¦Cancelar¦Annuler¦Cancelar
+Category labels¦Nombres de categorías¦Libellés des catégories¦Rótulos das categorias
+Loading the GTA V label…¦Cargando el nombre de GTA V…¦Chargement du libellé de GTA V…¦Carregando o nome do GTA V…
+This label is missing from the game archives.¦Este nombre no figura en los archivos del juego.¦Ce libellé est absent des archives du jeu.¦Este nome não consta nos arquivos do jogo.
+Advanced carcols settings¦Ajustes avanzados de carcols¦Paramètres avancés de carcols¦Configurações avançadas de carcols
+Advanced carcols settings…¦Ajustes avanzados de carcols…¦Paramètres avancés de carcols…¦Configurações avançadas de carcols…
+Most common GTA V Legacy preset¦Preajuste más común de GTA V Legacy¦Préréglage le plus courant de GTA V Legacy¦Predefinição mais comum do GTA V Legacy
+Connect the GTA V Legacy archives in Settings.¦Conecta los archivos de GTA V Legacy en Ajustes.¦Connectez les archives de GTA V Legacy dans Paramètres.¦Conecte os arquivos do GTA V Legacy nas Configurações.
+Enter a category and label for every slotNames row.¦Introduce una categoría y un nombre en cada fila de slotNames.¦Renseignez une catégorie et un libellé sur chaque ligne de slotNames.¦Digite uma categoria e um rótulo para cada linha de slotNames.
+Enter a value¦Introduce un valor¦Saisissez une valeur¦Digite um valor
 Load carvariations.meta¦Cargar carvariations.meta¦Charger carvariations.meta¦Carregar carvariations.meta
 Load carvariations.meta first¦Carga primero carvariations.meta¦Chargez d’abord carvariations.meta¦Carregue carvariations.meta primeiro
 Spawn colors¦Colores de aparición¦Couleurs d’apparition¦Cores de surgimento

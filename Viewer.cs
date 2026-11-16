@@ -1478,6 +1478,13 @@ namespace SentinelViewer
             var game = String.IsNullOrEmpty(gta) ? null : new GameTextures(gta);
             var vehicle = new Vehicle(args[2], args[3], args.Skip(4), game);
             var lines = new List<string>();
+            if (game != null)
+            {
+                var preset = game.ReadCommonStatMods();
+                if (preset == null || !preset.Elements("Item").Any())
+                    throw new InvalidOperationException("The GTA V statMods preset was not read from the archives.");
+                lines.Add("Most common GTA V statMods preset: " + preset.Elements("Item").Count() + " entries.");
+            }
             lines.Add("Bones: " + vehicle.Bones.Count + "; diffuse materials: " + vehicle.AppliedTextures);
             foreach (var pair in vehicle.Levels)
             {
@@ -1677,8 +1684,14 @@ namespace SentinelViewer
             var fresh = cleanEditor.ExportDocument(702, "702_sentinel5_modkit");
             var freshKit = fresh.Root.Element("Kits").Elements("Item").Single();
             if (fresh.Root.Elements().Count() != 1 || freshKit.Element("visibleMods").HasElements ||
-                freshKit.Element("statMods").HasElements || freshKit.Element("linkMods").HasElements)
+                freshKit.Element("statMods").Elements("Item").Count() != 77 || freshKit.Element("linkMods").HasElements)
                 throw new InvalidOperationException("New carcols retained imported kit data.");
+            if (!System.Xml.Linq.XNode.DeepEquals(freshKit.Element("statMods"),
+                cleanEditor.ExportVehicleDocument(702, "702_sentinel5_modkit").Descendants("statMods").Single()))
+                throw new InvalidOperationException("New carcols exported different statMods in the two modes.");
+            cleanEditor.SaveAdvancedSections(new System.Xml.Linq.XElement("statMods"), new System.Xml.Linq.XElement("slotNames"));
+            if (cleanEditor.ExportVehicleDocument(702, "702_sentinel5_modkit").Descendants("statMods").Single().HasElements)
+                throw new InvalidOperationException("An explicitly cleared statMods section was replaced by the default.");
             var example = original.Root.Element("Kits").Elements("Item").First(item => item.Element("statMods") != null &&
                 item.Element("statMods").HasElements);
             cleanEditor.ResetKit(example);

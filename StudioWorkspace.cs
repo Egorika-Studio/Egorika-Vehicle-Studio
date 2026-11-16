@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -80,6 +81,7 @@ namespace SentinelViewer
         {
             var menu = new Menu { Background = StudioTheme.Background, Margin = new Thickness(3, 1, 3, 2) };
             menu.Resources[typeof(MenuItem)] = StudioTheme.MainMenuItemStyle();
+            var separatorStyle = StudioTheme.MainMenuSeparatorStyle();
             var header = new DockPanel { Background = StudioTheme.Background };
             var version = new TextBlock { Text = "v" + StudioUpdate.Current.ToString(3), FontSize = 12,
                 Foreground = new SolidColorBrush(Color.FromRgb(205, 205, 205)),
@@ -99,6 +101,9 @@ namespace SentinelViewer
             AddMenu(file, Ui.Text("Открыть проект…", "Open project…"), PickProject);
             AddMenu(file, Ui.Text("Сохранить проект", "Save project"), () => SaveProject(false));
             AddMenu(file, Ui.Text("Сохранить как…", "Save project as…"), () => SaveProject(true));
+            file.Items.Add(new Separator { Style = separatorStyle });
+            AddMenu(file, Ui.Text("Новый carcols…", "New carcols…"), () => { if (ReadyEditor()) tuningEditor.NewKit(); });
+            AddMenu(file, Ui.Text("Новый со statMods…", "New with statMods…"), () => { if (ReadyEditor()) tuningEditor.NewFromExample(); });
             var import = AddMenu(menu, Ui.Text("Импорт", "Import"));
             AddMenu(import, Ui.Text("Модель YFT…", "Vehicle YFT…"), Open);
             AddMenu(import, Ui.Text("Модель из GTA V…", "Model from GTA V…"), OpenGameVehicle);
@@ -107,14 +112,13 @@ namespace SentinelViewer
             AddMenu(import, Ui.Text("Тюнинг YFT…", "Tuning YFT…"), () => { if (ReadyEditor()) tuningEditor.Import(); });
             AddMenu(import, Ui.Text("Готовый carcols…", "Existing carcols…"), () => { if (ReadyEditor()) tuningEditor.OpenCarcols(); });
             var export = AddMenu(menu, Ui.Text("Экспорт", "Export"));
-            AddMenu(export, Ui.Text("Новый carcols…", "New carcols…"), () => { if (ReadyEditor()) tuningEditor.NewKit(); });
-            AddMenu(export, Ui.Text("Новый со statMods…", "New with statMods…"), () => { if (ReadyEditor()) tuningEditor.NewFromExample(); });
             AddMenu(export, Ui.Text("Параметры комплекта…", "Kit settings…"), () => { if (ReadyEditor()) tuningEditor.EditKitSettings(); });
-            export.Items.Add(new Separator());
+            export.Items.Add(new Separator { Style = separatorStyle });
             AddMenu(export, Ui.Text("Только текущая модель…", "Current vehicle only…"), () => { if (ReadyEditor()) tuningEditor.Export(true); });
             AddMenu(export, Ui.Text("Весь файл…", "Entire file…"), () => { if (ReadyEditor()) tuningEditor.Export(false); });
             var settings = AddMenu(menu, Ui.Text("Настройки", "Settings"));
             AddMenu(settings, Ui.Text("Путь GTA V…", "GTA V path…"), ConnectGame);
+            AddMenu(settings, Ui.Text("Расширенные настройки carcols…", "Advanced carcols settings…"), OpenAdvancedTuning);
             var languageChoices = AddMenu(settings, Ui.Text("Язык", "Language"));
             foreach (var language in Ui.Languages)
             {
@@ -143,6 +147,25 @@ namespace SentinelViewer
             if (vehicle == null || loading) return false;
             EnsureTuningEditor(null);
             return true;
+        }
+
+        void OpenAdvancedTuning()
+        {
+            if (!ReadyEditor()) return;
+            Task connectArchives = null;
+            Func<Task> connect = () => connectArchives ?? (connectArchives = ConnectSavedArchives());
+            tuningEditor.EditAdvancedSettings(async () =>
+            {
+                await connect();
+                var source = gameTextures;
+                return source == null ? null : await Task.Run(() => source.ReadCommonStatMods());
+            }, async labels =>
+            {
+                await connect();
+                var source = gameTextures;
+                var language = Ui.Language;
+                return source == null ? null : await Task.Run(() => source.ReadCategoryLabels(language, labels));
+            });
         }
 
         static MenuItem AddMenu(ItemsControl parent, string text, Action action = null)

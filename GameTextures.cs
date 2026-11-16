@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Xml;
+using System.Xml.Linq;
 using CodeWalker.GameFiles;
 
 namespace SentinelViewer
@@ -18,8 +21,12 @@ namespace SentinelViewer
         readonly Dictionary<string, List<RpfResourceFileEntry>> versions =
             new Dictionary<string, List<RpfResourceFileEntry>>(StringComparer.OrdinalIgnoreCase);
         readonly List<RpfFileEntry> metadata = new List<RpfFileEntry>();
+        readonly List<RpfFileEntry> textTables = new List<RpfFileEntry>();
+        readonly Dictionary<string, Dictionary<uint, string>> categoryTextCache =
+            new Dictionary<string, Dictionary<uint, string>>(StringComparer.Ordinal);
         readonly Dictionary<RpfFileEntry, string> metaCache = new Dictionary<RpfFileEntry, string>();
         readonly Dictionary<string, int> packOrder = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+        string commonStatMods;
         RpfResourceFileEntry selectedModel;
         public string OriginRpf { get; private set; }
         public string SelectedPath { get { return selectedModel == null ? null : selectedModel.Path; } }
@@ -109,6 +116,7 @@ namespace SentinelViewer
 
             foreach (var entry in all)
             {
+                if (entry.Name.EndsWith(".gxt2", StringComparison.OrdinalIgnoreCase)) textTables.Add(entry);
                 if (entry.Name.Equals("carcols.meta", StringComparison.OrdinalIgnoreCase) ||
                     entry.Name.Equals("carcols.ymt", StringComparison.OrdinalIgnoreCase) ||
                     entry.Name.Equals("carvariations.meta", StringComparison.OrdinalIgnoreCase) ||
@@ -244,21 +252,7 @@ namespace SentinelViewer
                 string xml;
                 if (!metaCache.TryGetValue(candidate, out xml))
                 {
-                    var data = candidate.File.ExtractFile(candidate);
-                    if (data != null && candidate.Name.EndsWith(".meta", StringComparison.OrdinalIgnoreCase))
-                        xml = System.Text.Encoding.UTF8.GetString(data).TrimStart('\uFEFF', '\0');
-                    else if (data != null && kind == "carcols")
-                    {
-                        var file = new CarColsFile();
-                        file.Load(data, candidate);
-                        xml = file.Xml;
-                    }
-                    else if (data != null)
-                    {
-                        var file = new CarVariationsFile();
-                        file.Load(data, candidate);
-                        xml = file.Xml;
-                    }
+                    xml = DecodeMetadata(candidate, kind);
                     metaCache[candidate] = xml;
                 }
                 if (String.IsNullOrEmpty(xml)) continue;
@@ -269,6 +263,116 @@ namespace SentinelViewer
                 File.WriteAllText(Path.Combine(folder, kind + ".meta"), xml);
                 return;
             }
+        }
+
+        static string DecodeMetadata(RpfFileEntry entry, string kind)
+        {
+            var data = entry.File.ExtractFile(entry);
+            if (data == null) return null;
+            if (entry.Name.EndsWith(".meta", StringComparison.OrdinalIgnoreCase))
+                return System.Text.Encoding.UTF8.GetString(data).TrimStart('\uFEFF', '\0');
+            if (kind == "carcols")
+            {
+                var file = new CarColsFile();
+                file.Load(data, entry);
+                return file.Xml;
+            }
+            var variations = new CarVariationsFile();
+            variations.Load(data, entry);
+            return variations.Xml;
+        }
+
+        internal XElement ReadCommonStatMods()
+        {
+            if (commonStatMods != null) return XElement.Parse(commonStatMods);
+            var kits = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var counts = new Dictionary<string, int>(StringComparer.Ordinal);
+            foreach (var entry in metadata.Where(item => item.Name.StartsWith("carcols.", StringComparison.OrdinalIgnoreCase))
+                .OrderByDescending(Priority).ThenBy(item => item.Path, StringComparer.OrdinalIgnoreCase))
+            {
+                try
+                {
+                    string xml = DecodeMetadata(entry, "carcols");
+                    if (String.IsNullOrWhiteSpace(xml)) continue;
+                    using (var reader = XmlReader.Create(new StringReader(xml), new XmlReaderSettings { DtdProcessing = DtdProcessing.Prohibit }))
+                    {
+                        var section = XElement.Load(reader).Element("Kits");
+                        if (section == null) continue;
+                        foreach (var kit in section.Elements("Item"))
+                        {
+                            string name = (string)kit.Element("kitName");
+                            if (String.IsNullOrWhiteSpace(name) || !kits.Add(name)) continue;
+                            var stats = kit.Element("statMods");
+                            if (stats == null || !stats.Elements("Item").Any()) continue;
+                            string key = stats.ToString(SaveOptions.DisableFormatting);
+                            int count;
+                            counts.TryGetValue(key, out count);
+                            counts[key] = count + 1;
+                        }
+                    }
+                }
+                catch (XmlException) { }
+                catch (IOException) { }
+            }
+            commonStatMods = counts.OrderByDescending(pair => pair.Value).ThenBy(pair => pair.Key, StringComparer.Ordinal)
+                .Select(pair => pair.Key).FirstOrDefault();
+            return commonStatMods == null ? null : XElement.Parse(commonStatMods);
+        }
+
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.Synchronized)]
+        internal Dictionary<string, string> ReadCategoryLabels(string language, IEnumerable<string> labels)
+        {
+            string archiveName;
+            switch (language)
+            {
+                case "ru": archiveName = "russian"; break;
+                case "es": archiveName = "spanish"; break;
+                case "fr": archiveName = "french"; break;
+                case "pt-BR": archiveName = "portuguese"; break;
+                default: archiveName = "american"; break;
+            }
+            var keys = labels.Where(label => !String.IsNullOrWhiteSpace(label)).Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToDictionary(label => label, CategoryLabelHash, StringComparer.OrdinalIgnoreCase);
+            Dictionary<uint, string> cache;
+            if (!categoryTextCache.TryGetValue(archiveName, out cache))
+                categoryTextCache.Add(archiveName, cache = new Dictionary<uint, string>());
+            var pending = new HashSet<uint>(keys.Values.Where(hash => !cache.ContainsKey(hash)));
+            if (pending.Count > 0)
+            {
+                var archivesForLanguage = new[] { archiveName + ".rpf", archiveName + "_rel.rpf", archiveName + "dlc.rpf" };
+                var tables = textTables.Where(entry => archivesForLanguage.Any(name =>
+                    entry.Path.IndexOf("\\" + name + "\\", StringComparison.OrdinalIgnoreCase) >= 0))
+                    .OrderBy(entry => !entry.Name.StartsWith("global", StringComparison.OrdinalIgnoreCase))
+                    .ThenByDescending(Priority);
+                foreach (var entry in tables)
+                {
+                    if (pending.Count == 0) break;
+                    try
+                    {
+                        byte[] data = entry.File.ExtractFile(entry);
+                        if (data == null) continue;
+                        var table = new Gxt2File();
+                        table.Load(data, entry);
+                        if (table.TextEntries == null) continue;
+                        foreach (var text in table.TextEntries)
+                            if (text != null && !String.IsNullOrWhiteSpace(text.Text) && pending.Remove(text.Hash))
+                                cache[text.Hash] = text.Text;
+                    }
+                    catch (IOException) { }
+                }
+                foreach (uint hash in pending) cache[hash] = null;
+            }
+            return keys.Where(pair => cache[pair.Value] != null)
+                .ToDictionary(pair => pair.Key, pair => cache[pair.Value], StringComparer.OrdinalIgnoreCase);
+        }
+
+        static uint CategoryLabelHash(string label)
+        {
+            uint hash;
+            if (label.StartsWith("hash_", StringComparison.OrdinalIgnoreCase) &&
+                UInt32.TryParse(label.Substring(5), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out hash))
+                return hash;
+            return JenkHash.GenHash(label.ToLowerInvariant());
         }
 
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.Synchronized)]

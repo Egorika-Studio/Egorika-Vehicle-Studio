@@ -13,7 +13,7 @@ using Microsoft.Win32;
 
 namespace SentinelViewer
 {
-    sealed class TuningEditor : Window
+    sealed partial class TuningEditor : Window
     {
         public sealed class Part
         {
@@ -56,6 +56,7 @@ namespace SentinelViewer
         }
         readonly ComboBox kitType = new ComboBox { Width = 225, Margin = new Thickness(5, 0, 14, 0), DisplayMemberPath = "Value", SelectedValuePath = "Key" };
         XElement templateStats;
+        XElement editedSlots;
         string generatedName;
         readonly TextBox kitName = new TextBox { Width = 230, Margin = new Thickness(5, 0, 14, 0) };
 
@@ -301,7 +302,7 @@ namespace SentinelViewer
 
         bool ConfirmNew()
         {
-            return (parts.Count == 0 && linkMods.Count == 0 && templateStats == null) ||
+            return (parts.Count == 0 && linkMods.Count == 0 && templateStats == null && editedSlots == null) ||
                 MessageBox.Show(DialogOwner, Ui.Text("Очистить текущий комплект и создать новый?",
                     "Clear the current kit and create a new one?"), Ui.Text("Новый carcols", "New carcols"),
                     MessageBoxButton.YesNo) == MessageBoxResult.Yes;
@@ -331,7 +332,8 @@ namespace SentinelViewer
             importedKit = null;
             importedPath = null;
             var stats = example == null ? null : example.Element("statMods");
-            templateStats = stats == null ? null : new XElement(stats);
+            templateStats = example == null ? null : stats == null ? new XElement("statMods") : new XElement(stats);
+            editedSlots = null;
             string type = example == null ? null : (string)example.Element("kitType");
             SelectKitType(KitTypes.Contains(type) ? type : KitTypes[0]);
             kitId.Clear();
@@ -378,6 +380,7 @@ namespace SentinelViewer
                 foreach (var link in links.Elements("Item"))
                     linkMods.Add(new LinkMod { Original = link, Model = (string)link.Element("modelName"), Bone = (string)link.Element("bone") });
             templateStats = null;
+            editedSlots = null;
             imported = document;
             string type = (string)kit.Element("kitType");
             SelectKitType(type);
@@ -524,7 +527,7 @@ namespace SentinelViewer
                 var newKit = created.Root.Element("Kits").Element("Item");
                 newKit.SetElementValue("kitType", kitType.SelectedValue as string ?? KitTypes[0]);
                 newKit.Element("linkMods").Add(linkMods.Select(CreateLink));
-                if (templateStats != null) newKit.Element("statMods").ReplaceWith(new XElement(templateStats));
+                ApplyAdvancedSections(newKit);
                 return created;
             }
             var copy = new XDocument(imported);
@@ -543,10 +546,11 @@ namespace SentinelViewer
                 var kitOnly = CreateDocument(id, name, ExportParts(drafts)).Root.Element("Kits").Element("Item");
                 kitOnly.SetElementValue("kitType", kitType.SelectedValue as string ?? KitTypes[0]);
                 kitOnly.Element("linkMods").Add(linkMods.Select(CreateLink));
-                if (templateStats != null) kitOnly.Element("statMods").ReplaceWith(new XElement(templateStats));
+                ApplyAdvancedSections(kitOnly);
                 return kitOnly;
             }
             var kit = new XElement(importedKit);
+            ApplyAdvancedSections(kit);
             kit.SetElementValue("kitName", name);
             string chosenType = kitType.SelectedValue as string;
             if (chosenType != null && (string)kit.Element("kitType") != chosenType) kit.SetElementValue("kitType", chosenType);

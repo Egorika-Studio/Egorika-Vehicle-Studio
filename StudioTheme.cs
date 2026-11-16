@@ -14,6 +14,18 @@ namespace SentinelViewer
         static readonly Brush Text = Brush(225, 225, 225);
         static readonly Brush Accent = Brush(56, 100, 153);
 
+        public static Style MainMenuSeparatorStyle()
+        {
+            var line = new FrameworkElementFactory(typeof(Border));
+            line.SetValue(Border.BackgroundProperty, Line);
+            line.SetValue(FrameworkElement.HeightProperty, 1.0);
+            line.SetValue(FrameworkElement.MarginProperty, new Thickness(9, 4, 9, 4));
+            line.SetValue(UIElement.SnapsToDevicePixelsProperty, true);
+            var style = new Style(typeof(Separator));
+            style.Setters.Add(new Setter(Control.TemplateProperty, new ControlTemplate(typeof(Separator)) { VisualTree = line }));
+            return style;
+        }
+
         public static Style MainMenuItemStyle()
         {
             return (Style)XamlReader.Parse(@"
