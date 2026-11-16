@@ -1041,6 +1041,55 @@ namespace SentinelViewer
             File.WriteAllText(GameSettings, folder);
         }
 
+        void RememberWindowPlacement()
+        {
+            string path = StudioPaths.Setting("window-placement.txt");
+            var culture = CultureInfo.InvariantCulture;
+            try
+            {
+                if (File.Exists(path))
+                {
+                    var saved = File.ReadAllLines(path);
+                    if (saved.Length == 3)
+                    {
+                        double width, height;
+                        if (Double.TryParse(saved[1], NumberStyles.Float, culture, out width) &&
+                            Double.TryParse(saved[2], NumberStyles.Float, culture, out height) &&
+                            width >= MinWidth && width <= Double.MaxValue &&
+                            height >= MinHeight && height <= Double.MaxValue)
+                        {
+                            var workArea = SystemParameters.WorkArea;
+                            Width = Math.Max(MinWidth, Math.Min(width, workArea.Width));
+                            Height = Math.Max(MinHeight, Math.Min(height, workArea.Height));
+                        }
+                        if (saved[0] == "Maximized") WindowState = WindowState.Maximized;
+                    }
+                }
+            }
+            catch (IOException) { }
+            catch (UnauthorizedAccessException) { }
+
+            var lastVisibleState = WindowState;
+            StateChanged += (s, e) =>
+            {
+                if (WindowState != WindowState.Minimized) lastVisibleState = WindowState;
+            };
+            Closing += (s, e) =>
+            {
+                if (e.Cancel) return;
+                var bounds = RestoreBounds;
+                try
+                {
+                    Directory.CreateDirectory(Path.GetDirectoryName(path));
+                    File.WriteAllLines(path, new[] { lastVisibleState.ToString(),
+                        (bounds.IsEmpty ? Width : bounds.Width).ToString("R", culture),
+                        (bounds.IsEmpty ? Height : bounds.Height).ToString("R", culture) });
+                }
+                catch (IOException) { }
+                catch (UnauthorizedAccessException) { }
+            };
+        }
+
         async void Start(string[] args)
         {
             StartSessionTracking();
@@ -1463,6 +1512,7 @@ namespace SentinelViewer
             }
             var app = new Application { ShutdownMode = ShutdownMode.OnMainWindowClose };
             var viewer = new Viewer();
+            viewer.RememberWindowPlacement();
             viewer.Loaded += (s, e) => viewer.Start(args);
             return app.Run(viewer);
         }
@@ -1679,6 +1729,27 @@ namespace SentinelViewer
                     throw new InvalidOperationException("New entries in imported carcols were not indented.");
             }
             var cleanEditor = new TuningEditor("sentinel5", testWindow.vehicle.Bones.Values.Select(bone => bone.Name));
+            var mixedCasePart = added.Descendants("visibleMods").Single().Element("Item");
+            mixedCasePart.Element("linkedModels").Element("Item").Name = "item";
+            mixedCasePart.Element("turnOffBones").Add(new System.Xml.Linq.XElement("Item", "misc_c"),
+                new System.Xml.Linq.XElement("item", "misc_d"));
+            string mixedCaseFile = Path.GetTempFileName();
+            try
+            {
+                added.Save(mixedCaseFile);
+                cleanEditor.LoadCarcols(mixedCaseFile, false);
+                var importedPart = cleanEditor.PreviewParts.Single();
+                if (importedPart.Linked != "roof_link" || importedPart.TurnOff != "misc_c, misc_d")
+                    throw new InvalidOperationException("Lowercase carcols list entries were not imported.");
+                importedPart.TurnOff = "misc_d, misc_e";
+                var editedPart = cleanEditor.ExportVehicleDocument(606, "606_sentinel5_modkit")
+                    .Descendants("visibleMods").Single().Element("Item");
+                if ((string)editedPart.Element("linkedModels").Element("item") != "roof_link" ||
+                    (string)editedPart.Element("turnOffBones").Element("item") != "misc_d" ||
+                    (string)editedPart.Element("turnOffBones").Element("Item") != "misc_e")
+                    throw new InvalidOperationException("Edited carcols lists lost their entry casing.");
+            }
+            finally { File.Delete(mixedCaseFile); }
             cleanEditor.LoadCarcols(metadata);
             cleanEditor.ResetKit(null);
             var fresh = cleanEditor.ExportDocument(702, "702_sentinel5_modkit");

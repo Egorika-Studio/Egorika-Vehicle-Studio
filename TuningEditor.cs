@@ -400,9 +400,15 @@ namespace SentinelViewer
             return parts.Count;
         }
 
+        static IEnumerable<XElement> NameEntries(XElement element)
+        {
+            return element == null ? Enumerable.Empty<XElement>() :
+                element.Elements().Where(item => item.Name == "Item" || item.Name == "item");
+        }
+
         static string ReadNames(XElement element)
         {
-            return element == null ? "" : String.Join(", ", element.Elements("Item").Select(item => item.Value));
+            return String.Join(", ", NameEntries(element).Select(item => item.Value));
         }
 
         internal string PreviewXml()
@@ -623,7 +629,15 @@ namespace SentinelViewer
                 var node = item.Element(field.Key);
                 if (ReadNames(node) == field.Value) continue;
                 if (node == null) item.Add(Entries(field.Key, field.Value));
-                else node.ReplaceNodes(Names(field.Value).Select(value => new XElement("Item", value)));
+                else
+                {
+                    // Some stock carcols use lowercase list entries.
+                    var originalNames = NameEntries(node).ToLookup(entry => entry.Value.Trim(),
+                        entry => entry.Name, StringComparer.OrdinalIgnoreCase);
+                    var defaultName = originalNames.SelectMany(group => group).FirstOrDefault() ?? "Item";
+                    node.ReplaceNodes(Names(field.Value).Select(value =>
+                        new XElement(originalNames[value].FirstOrDefault() ?? defaultName, value)));
+                }
             }
             return item;
         }
