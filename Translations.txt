@@ -55,6 +55,8 @@ Detach window¦Separar ventana¦Détacher la fenêtre¦Desencaixar janela
 Dock window¦Acoplar ventana¦Ancrer la fenêtre¦Encaixar janela
 Swap with:¦Intercambiar con:¦Échanger avec :¦Trocar com:
 Check for updates…¦Buscar actualizaciones…¦Rechercher des mises à jour…¦Verificar atualizações…
+License…¦Licencia…¦Licence…¦Licença…
+Egorika Vehicle Studio License¦Licencia de Egorika Vehicle Studio¦Licence d’Egorika Vehicle Studio¦Licença do Egorika Vehicle Studio
 No new version is available.¦No hay una versión nueva.¦Aucune nouvelle version disponible.¦Nenhuma versão nova disponível.
 Download version¦Descargar la versión¦Télécharger la version¦Baixar a versão
 and install it when the editor closes?¦e instalarla al cerrar el editor?¦et l’installer à la fermeture de l’éditeur ?¦e instalar ao fechar o editor?

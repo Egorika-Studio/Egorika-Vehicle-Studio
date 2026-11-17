@@ -57,7 +57,12 @@ Keep the exact ZIP used to build the installer available on its prerelease.
 
 ## Licenses
 
-Egorika Vehicle Studio's own code is available under the [MIT License](LICENSE).
+Egorika Vehicle Studio's source code is publicly available under the
+[MIT License with Commons Clause 1.0](LICENSE). You may use, modify, and
+share builds for free. Selling the software or a build whose value comes
+substantially from it requires a separate license. Earlier versions
+released under MIT remain available under their original terms.
+
 [SharpDX](SharpDX-LICENSE.txt) ships with its MIT notice.
 The app uses [CodeWalker by dexyfex](https://www.gta5-mods.com/tools/codewalker-gtav-interactive-3d-map)
 to read game formats. Third-party code and assets are subject to their own terms.

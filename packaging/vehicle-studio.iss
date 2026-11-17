@@ -50,8 +50,11 @@ Source: "{#FileSource}\EgorikaVehicleStudio.exe"; DestDir: "{app}"; Flags: {#Fil
 Source: "{#FileSource}\SharpDX.dll"; DestDir: "{app}\runtime"; Flags: {#FileFlags}; ExternalSize: {#OnlineSharpDXSize}
 Source: "{#FileSource}\SharpDX.Mathematics.dll"; DestDir: "{app}\runtime"; Flags: {#FileFlags}; ExternalSize: {#OnlineMathSize}
 Source: "{#FileSource}\thumbnails\*.png"; DestDir: "{app}\thumbnails"; Flags: {#FileFlags}; ExternalSize: {#OnlineThumbnailSize}
-Source: "..\LICENSE"; DestDir: "{app}\runtime\licenses"; DestName: "Egorika-MIT.txt"; Flags: ignoreversion
+Source: "..\LICENSE"; DestDir: "{app}\runtime\licenses"; DestName: "Egorika-LICENSE.txt"; Flags: ignoreversion
 Source: "..\SharpDX-LICENSE.txt"; DestDir: "{app}\runtime\licenses"; Flags: ignoreversion
+
+[InstallDelete]
+Type: files; Name: "{app}\runtime\licenses\Egorika-MIT.txt"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked

@@ -39,8 +39,14 @@ Pour générer l’installateur avec le ZIP et l’EXE de mise à jour, passez `
 
 ## Licences
 
-Le code propre à Egorika Vehicle Studio est disponible sous
-[licence MIT](LICENSE). [SharpDX](SharpDX-LICENSE.txt) est fourni avec sa
+Le code source d’Egorika Vehicle Studio est accessible au public sous
+[licence MIT avec Commons Clause 1.0](LICENSE). Vous pouvez utiliser,
+modifier et partager gratuitement des versions compilées. La vente du
+logiciel ou d’une version dont la valeur en dépend de manière substantielle
+nécessite une licence distincte. Les versions précédemment publiées sous MIT
+conservent leurs conditions d’origine.
+
+[SharpDX](SharpDX-LICENSE.txt) est fourni avec sa
 notice MIT. L’application utilise
 [CodeWalker de dexyfex](https://www.gta5-mods.com/tools/codewalker-gtav-interactive-3d-map)
 pour lire les formats de jeu. Les codes et ressources tiers sont soumis à

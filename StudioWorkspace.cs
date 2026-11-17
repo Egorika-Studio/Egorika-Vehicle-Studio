@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -129,8 +130,26 @@ namespace SentinelViewer
             AddMenu(settings, Ui.Text("Вернуть раскладку", "Reset layout"), ResetWorkspace);
             var help = AddMenu(menu, Ui.Text("Справка", "Help"));
             AddMenu(help, Ui.Text("Проверить обновления…", "Check for updates…"), CheckForStudioUpdate);
+            AddMenu(help, Ui.Text("Лицензия…", "License…"), ShowLicense);
             InputBindings.Add(new KeyBinding(new Shortcut(() => SaveProject(false)), Key.S, ModifierKeys.Control));
             InputBindings.Add(new KeyBinding(new Shortcut(PickProject), Key.O, ModifierKeys.Control));
+        }
+
+        void ShowLicense()
+        {
+            string license;
+            using (var reader = new StreamReader(typeof(Viewer).Assembly.GetManifestResourceStream("LICENSE")))
+                license = reader.ReadToEnd();
+            var dialog = new Window
+            {
+                Owner = this, Icon = Icon, Width = 740, Height = 560,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                Title = Ui.Text("Лицензия Egorika Vehicle Studio", "Egorika Vehicle Studio License"),
+                Content = new TextBox { Text = license, IsReadOnly = true, TextWrapping = TextWrapping.Wrap,
+                    VerticalScrollBarVisibility = ScrollBarVisibility.Auto, Margin = new Thickness(12) }
+            };
+            StudioTheme.Apply(dialog);
+            dialog.ShowDialog();
         }
 
         sealed class Shortcut : ICommand
