@@ -23,6 +23,7 @@ namespace SentinelViewer
             public bool Alpha;
             public int PaintLayer;
             public MeshGeometry3D LiveryMesh;
+            public DX.Vector4 LiveryMultiplier = DX.Vector4.One;
             public byte[] Ao;
             public GeometryModel3D AoModel;
             public bool AoPrepared;
@@ -35,9 +36,8 @@ namespace SentinelViewer
         public readonly List<string> TextureErrors = new List<string>();
         public int AppliedTextures;
         double reflections = 0.45;
-        Material liveryMaterial;
-        Material tuningLiveryMaterial;
-        Texture tuningLiveryTexture;
+        LiveryPreview livery;
+        LiveryPreview tuningLivery;
         FragType baseFragment;
         FragType highFragment;
         readonly HashSet<ImageSource> transparentImages = new HashSet<ImageSource>();
@@ -340,6 +340,8 @@ namespace SentinelViewer
                  ShaderParameter(geo.Shader, "diffuse2sampler") is TextureBase ||
                  ShaderParameter(geo.Shader, "diffusesampler3") is TextureBase)
                 ? new Point[count] : null;
+            var liveryMultiplier = overlayUv == null ? DX.Vector4.One :
+                ShaderParameter(geo.Shader, "matdiffusecolor2") as DX.Vector4? ?? DX.Vector4.One;
 
             for (int i = 0; i < count; i++)
             {
@@ -423,7 +425,8 @@ namespace SentinelViewer
                 model.Freeze();
                 if (decal != null) decal.Freeze();
                 pieces.Add(new Piece { Bone = entry.Key, Model = model, Glass = glass, Alpha = alpha,
-                    PaintLayer = paintLayer, LiveryMesh = decal, TextureHasAlpha = textureHasAlpha, Ao = ao == null ? null : ao.ToArray() });
+                    PaintLayer = paintLayer, LiveryMesh = decal, LiveryMultiplier = liveryMultiplier,
+                    TextureHasAlpha = textureHasAlpha, Ao = ao == null ? null : ao.ToArray() });
             }
         }
 
@@ -539,6 +542,7 @@ namespace SentinelViewer
         // These properties moved from Texture to TextureBase between CodeWalker builds.
         static readonly System.Reflection.PropertyInfo textureWidth = typeof(Texture).GetProperty("Width");
         static readonly System.Reflection.PropertyInfo textureHeight = typeof(Texture).GetProperty("Height");
+        static readonly System.Reflection.PropertyInfo textureFormat = typeof(Texture).GetProperty("Format");
 
         static BitmapSource TextureBitmap(Texture texture, byte[] pixels)
         {
@@ -566,30 +570,72 @@ namespace SentinelViewer
                  t.Name.IndexOf("_sign", StringComparison.OrdinalIgnoreCase) >= 0));
         }
 
-        public void SetLivery(Texture texture) { liveryMaterial = CreateLiveryMaterial(texture); }
+        public void SetLivery(Texture texture) { livery = texture == null ? null : new LiveryPreview(texture); }
 
         public void SetTuningLivery(Texture texture)
         {
-            if (tuningLiveryTexture == texture) return;
-            tuningLiveryMaterial = CreateLiveryMaterial(texture);
-            tuningLiveryTexture = texture;
+            if ((tuningLivery == null ? null : tuningLivery.Texture) == texture) return;
+            tuningLivery = texture == null ? null : new LiveryPreview(texture);
         }
 
-        static Material CreateLiveryMaterial(Texture texture)
+        sealed class LiveryPreview
         {
-            if (texture == null) return null;
-            var bitmap = TextureBitmap(texture, DDSIO.GetPixels(texture, 0));
-            var material = new DiffuseMaterial(new ImageBrush(bitmap) { Stretch = Stretch.Fill,
-                ViewportUnits = BrushMappingMode.Absolute, Viewport = new Rect(0, 0, 1, 1) });
-            material.Freeze();
-            return material;
+            public readonly Texture Texture;
+            readonly byte[] pixels;
+            readonly Dictionary<DX.Vector4, Material> materials = new Dictionary<DX.Vector4, Material>();
+
+            public LiveryPreview(Texture texture)
+            {
+                Texture = texture;
+                pixels = DDSIO.GetPixels(texture, 0);
+                if ((TextureFormat)textureFormat.GetValue(texture, null) == TextureFormat.D3DFMT_A8)
+                {
+                    // CodeWalker expands A8 as opaque grayscale. The game samples it as (0, 0, 0, alpha).
+                    for (int i = 0; i < pixels.Length; i += 4)
+                    {
+                        pixels[i + 3] = pixels[i];
+                        pixels[i] = pixels[i + 1] = pixels[i + 2] = 0;
+                    }
+                }
+            }
+
+            public Material MaterialFor(DX.Vector4 multiplier)
+            {
+                Material material;
+                if (materials.TryGetValue(multiplier, out material)) return material;
+                var tinted = pixels;
+                if (multiplier != DX.Vector4.One)
+                {
+                    // vehicle_paint multiplies sampled color and alpha by matDiffuseColor2 before blending.
+                    tinted = new byte[pixels.Length];
+                    for (int i = 0; i < pixels.Length; i += 4)
+                    {
+                        tinted[i] = Scale(pixels[i], multiplier.Z);
+                        tinted[i + 1] = Scale(pixels[i + 1], multiplier.Y);
+                        tinted[i + 2] = Scale(pixels[i + 2], multiplier.X);
+                        tinted[i + 3] = Scale(pixels[i + 3], multiplier.W);
+                    }
+                }
+                var bitmap = TextureBitmap(Texture, tinted);
+                material = new DiffuseMaterial(new ImageBrush(bitmap) { Stretch = Stretch.Fill,
+                    ViewportUnits = BrushMappingMode.Absolute, Viewport = new Rect(0, 0, 1, 1) });
+                material.Freeze();
+                materials.Add(multiplier, material);
+                return material;
+            }
+
+            static byte Scale(byte channel, float multiplier)
+            {
+                if (Single.IsNaN(multiplier) || Single.IsInfinity(multiplier)) return channel;
+                return (byte)Math.Round(Math.Max(0, Math.Min(255, channel * multiplier)));
+            }
         }
 
         public GeometryModel3D PreviewLivery(Piece piece)
         {
-            var active = tuningLiveryMaterial ?? liveryMaterial;
-            if (piece.LiveryMesh == null || active == null) return null;
-            var model = new GeometryModel3D(piece.LiveryMesh, active);
+            var active = tuningLivery ?? livery;
+            if (piece.LiveryMesh == null || active == null || piece.LiveryMultiplier.W <= 0) return null;
+            var model = new GeometryModel3D(piece.LiveryMesh, active.MaterialFor(piece.LiveryMultiplier));
             model.Freeze();
             return model;
         }

@@ -1668,6 +1668,50 @@ namespace SentinelViewer
                 if (highPieces.Any(p => (p.Alpha || p.TextureHasAlpha) && testWindow.vehicle.PreviewAo(p) != null))
                     throw new InvalidOperationException("AO was applied over a transparent base material.");
                 lines.Add("All 11 livery textures found; first livery meshes: " + meshes);
+                var liveryPiece = new Vehicle.Piece { LiveryMesh = highPieces.First(piece => piece.LiveryMesh != null).LiveryMesh };
+                var liveryCases = new[] {
+                    new { Name = "comet6_livery6", IsMask = true },
+                    new { Name = "comet7_livery1", IsMask = true },
+                    new { Name = "comet6_livery7", IsMask = false }
+                };
+                foreach (var sample in liveryCases)
+                {
+                    var texture = game.ReadLivery(sample.Name);
+                    var sourcePixels = CodeWalker.Utils.DDSIO.GetPixels(texture, 0);
+                    testWindow.vehicle.SetTuningLivery(texture);
+                    liveryPiece.LiveryMultiplier = SharpDX.Vector4.One;
+                    var brush = (ImageBrush)((DiffuseMaterial)testWindow.vehicle.PreviewLivery(liveryPiece).Material).Brush;
+                    var image = (System.Windows.Media.Imaging.BitmapSource)brush.ImageSource;
+                    var previewPixels = new byte[sourcePixels.Length];
+                    image.CopyPixels(previewPixels, image.PixelWidth * 4, 0);
+                    if (sample.IsMask)
+                    {
+                        for (int i = 0; i < previewPixels.Length; i += 4)
+                            if (previewPixels[i] != 0 || previewPixels[i + 1] != 0 || previewPixels[i + 2] != 0 ||
+                                previewPixels[i + 3] != sourcePixels[i])
+                                throw new InvalidOperationException("Livery A8 did not render as black with the original coverage: " + sample.Name);
+                    }
+                    else if (!previewPixels.SequenceEqual(sourcePixels))
+                        throw new InvalidOperationException("Color livery pixels changed: " + sample.Name);
+
+                    liveryPiece.LiveryMultiplier = new SharpDX.Vector4(1, 0.5f, 0.25f, 0.5f);
+                    var adjusted = (DiffuseMaterial)testWindow.vehicle.PreviewLivery(liveryPiece).Material;
+                    image = (System.Windows.Media.Imaging.BitmapSource)((ImageBrush)adjusted.Brush).ImageSource;
+                    image.CopyPixels(previewPixels, image.PixelWidth * 4, 0);
+                    for (int i = 0; i < previewPixels.Length; i += 4)
+                    {
+                        if (previewPixels[i] != (sample.IsMask ? 0 : (int)Math.Round(sourcePixels[i] / 4.0)) ||
+                            previewPixels[i + 1] != (sample.IsMask ? 0 : (int)Math.Round(sourcePixels[i + 1] / 2.0)) ||
+                            previewPixels[i + 2] != (sample.IsMask ? 0 : sourcePixels[i + 2]) ||
+                            previewPixels[i + 3] != (int)Math.Round(sourcePixels[i + (sample.IsMask ? 0 : 3)] / 2.0))
+                            throw new InvalidOperationException("matDiffuseColor2 did not modulate the livery: " + sample.Name);
+                    }
+                    liveryPiece.LiveryMultiplier.W = 0;
+                    if (testWindow.vehicle.PreviewLivery(liveryPiece) != null)
+                        throw new InvalidOperationException("Zero livery opacity should suppress the overlay.");
+                }
+                testWindow.vehicle.SetTuningLivery(null);
+                lines.Add("A8 and color liveries honor material RGB and alpha modulation.");
             }
             if (ParseSceneTime("18:45") != 1125 || ParseSceneTime("24:00").HasValue ||
                 ParseReflection("45,5 %") != 0.455 || ParseReflection("101").HasValue)
